@@ -104,6 +104,7 @@ if(USE_CSPICE)
   set_property(TARGET cspice APPEND PROPERTY COMPILE_OPTIONS "-Wno-implicit-int")
   set_property(TARGET cspice APPEND PROPERTY COMPILE_OPTIONS "-Wno-incompatible-pointer-types")
   set_property(TARGET cspice APPEND PROPERTY COMPILE_OPTIONS "-Wno-pointer-to-int-cast")
+  set_property(TARGET cspice APPEND PROPERTY COMPILE_OPTIONS "-Wunused-result")
 endif()
 
 #
