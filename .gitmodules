@@ -31,3 +31,6 @@
 [submodule "pagmo2"]
 	path = pagmo2
 	url = https://github.com/tudat/pagmo2
+[submodule "tudatpy"]
+	path = tudatpy
+	url = https://github.com/ggarrett13/tudatpy.git

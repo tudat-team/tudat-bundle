@@ -93,12 +93,12 @@ include(CheckIncludeFiles)
 unset(HAVE_UNISTD_H CACHE)
 check_include_files(unistd.h HAVE_UNISTD_H)
 if(NOT HAVE_UNISTD_H)
-    if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-        execute_process(COMMAND xcode-select;-p OUTPUT_VARIABLE Output ERROR_VARIABLE Error)
-        message(FATAL_ERROR "C POSIX libraries not found on system. From command line execute:\nxcode-select --install.\n${Output}\n${Error}\n")
-    else()
-        message(FATAL_ERROR "C POSIX libraries not found on system. Please (re)install development environment.")
-    endif()
+  if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    execute_process(COMMAND xcode-select;-p OUTPUT_VARIABLE Output ERROR_VARIABLE Error)
+    message(FATAL_ERROR "C POSIX libraries not found on system. From command line execute:\nxcode-select --install.\n${Output}\n${Error}\n")
+  else()
+    message(FATAL_ERROR "C POSIX libraries not found on system. Please (re)install development environment.")
+  endif()
 endif()
 
 #
@@ -106,61 +106,61 @@ endif()
 #
 # Prevent find_package from throwing an error with Boost_NO_SYSTEM_PATHS ON
 if(EXISTS "${BOOST_INCLUDEDIR}/boost/version.hpp")
-# Set variables to true, if boost is already on system these stay true!
-set(BoostComponentsFound ON)
-set(BoostComponentsDir ON)
-foreach(Component ${BoostComponents})
-  find_package(Boost ${BoostVersion} COMPONENTS ${Component} QUIET)
+  # Set variables to true, if boost is already on system these stay true!
+  set(BoostComponentsFound ON)
+  set(BoostComponentsDir ON)
+  foreach(Component ${BoostComponents})
+    find_package(Boost ${BoostVersion} COMPONENTS ${Component} QUIET)
 
-  # Convert component name to upper case
-  string(TOUPPER "${Component}" ComponentUpper)
+    # Convert component name to upper case
+    string(TOUPPER "${Component}" ComponentUpper)
 
-  # Variable variable names! Second-level unwrapping. 
-  # message(STATUS "${ComponentUpper}: ${Boost_${ComponentUpper}_FOUND} - ${Boost_${ComponentUpper}_LIBRARY}")
-  if(NOT ${Boost_${ComponentUpper}_FOUND})
-    set(BoostComponentsFound OFF)
-	message(STATUS "Boost ${Component} not found on system. We will build it then. Please ignore boost warnings.")
-  endif()
+    # Variable variable names! Second-level unwrapping.
+    # message(STATUS "${ComponentUpper}: ${Boost_${ComponentUpper}_FOUND} - ${Boost_${ComponentUpper}_LIBRARY}")
+    if(NOT ${Boost_${ComponentUpper}_FOUND})
+      set(BoostComponentsFound OFF)
+      message(STATUS "Boost ${Component} not found on system. We will build it then. Please ignore boost warnings.")
+    endif()
 
-  # Check if the library is located in the local library directory 
-  string(FIND "${Boost_${ComponentUpper}_LIBRARY}" "${BOOST_INCLUDEDIR}" BoostComponentsDirYes)
-  if(BoostComponentsDirYes LESS 0)
-    set(BoostComponentsDir OFF)
-  endif()
-  
-  # Need to unset these too, otherwise other find_package calls willl not update them. Also some are put in current scope and cache
-  unset("Boost_${ComponentUpper}_FOUND")
-  unset("Boost_${ComponentUpper}_LIBRARY")
-  unset("Boost_${ComponentUpper}_FOUND" CACHE)
-  unset("Boost_${ComponentUpper}_LIBRARY" CACHE)
-  unset("Boost_${ComponentUpper}_LIBRARIES")
-  unset("Boost_${ComponentUpper}_LIBRARY_DEBUG" CACHE)
-  unset("Boost_${ComponentUpper}_LIBRARY_RELEASE" CACHE)
-  
-  # Exit the for loop if a single component fails
-  if(NOT ${BoostComponentsDir})
-    break()
-  endif()
-  if(NOT ${BoostComponentsFound})
-    break()
-  endif()
+    # Check if the library is located in the local library directory
+    string(FIND "${Boost_${ComponentUpper}_LIBRARY}" "${BOOST_INCLUDEDIR}" BoostComponentsDirYes)
+    if(BoostComponentsDirYes LESS 0)
+      set(BoostComponentsDir OFF)
+    endif()
 
-endforeach()
+    # Need to unset these too, otherwise other find_package calls willl not update them. Also some are put in current scope and cache
+    unset("Boost_${ComponentUpper}_FOUND")
+    unset("Boost_${ComponentUpper}_LIBRARY")
+    unset("Boost_${ComponentUpper}_FOUND" CACHE)
+    unset("Boost_${ComponentUpper}_LIBRARY" CACHE)
+    unset("Boost_${ComponentUpper}_LIBRARIES")
+    unset("Boost_${ComponentUpper}_LIBRARY_DEBUG" CACHE)
+    unset("Boost_${ComponentUpper}_LIBRARY_RELEASE" CACHE)
 
-# Unset all variable from find_package(Boost), preventing future usages of this macro becoming lazy.
-# As before some variables are also cached, so need double cleaning
-unset(Boost_FOUND)
-unset(Boost_INCLUDE_DIRS)
-unset(Boost_LIBRARY_DIRS)
-unset(Boost_LIBRARY_DIRS CACHE)
-unset(Boost_LIBRARIES)
-unset(Boost_VERSION)
-unset(Boost_VERSION CACHE)
-unset(Boost_LIB_VERSION)
-unset(Boost_LIB_VERSION CACHE)
-unset(Boost_MAJOR_VERSION)
-unset(Boost_MINOR_VERSION)
-unset(Boost_SUBMINOR_VERSION)
+    # Exit the for loop if a single component fails
+    if(NOT ${BoostComponentsDir})
+      break()
+    endif()
+    if(NOT ${BoostComponentsFound})
+      break()
+    endif()
+
+  endforeach()
+
+  # Unset all variable from find_package(Boost), preventing future usages of this macro becoming lazy.
+  # As before some variables are also cached, so need double cleaning
+  unset(Boost_FOUND)
+  unset(Boost_INCLUDE_DIRS)
+  unset(Boost_LIBRARY_DIRS)
+  unset(Boost_LIBRARY_DIRS CACHE)
+  unset(Boost_LIBRARIES)
+  unset(Boost_VERSION)
+  unset(Boost_VERSION CACHE)
+  unset(Boost_LIB_VERSION)
+  unset(Boost_LIB_VERSION CACHE)
+  unset(Boost_MAJOR_VERSION)
+  unset(Boost_MINOR_VERSION)
+  unset(Boost_SUBMINOR_VERSION)
 
 endif()
 
@@ -212,11 +212,11 @@ if(NOT EXISTS ${ZipFilePath})
   message(STATUS "Downloading boost ${BoostVersion} to ${BoostCacheDir}")
 endif()
 file(DOWNLOAD http://sourceforge.net/projects/boost/files/boost/${BoostVersion}/${BoostFolderName}.tar.bz2/download
-     ${ZipFilePath}
-     STATUS Status
-     SHOW_PROGRESS
-     EXPECTED_HASH SHA1=${BoostSHA1}
-     )
+        ${ZipFilePath}
+        STATUS Status
+        SHOW_PROGRESS
+        EXPECTED_HASH SHA1=${BoostSHA1}
+        )
 
 # Extract boost if required
 string(FIND "${Status}" "returning early" Found)
@@ -230,9 +230,9 @@ if(Found LESS "0" OR NOT IS_DIRECTORY "${BoostSourceDir}")
     message(STATUS "On Windows this can take up to several (tens) of minutes.")
   endif()
   execute_process(COMMAND ${CMAKE_COMMAND} -E tar xfz ${BoostFolderName}.tar.bz2
-                  WORKING_DIRECTORY ${BoostExtractFolder}
-                  RESULT_VARIABLE Result
-                  )
+          WORKING_DIRECTORY ${BoostExtractFolder}
+          RESULT_VARIABLE Result
+          )
   if(NOT Result EQUAL "0")
     message(FATAL_ERROR "Failed extracting boost ${BoostVersion} to ${BoostExtractFolder}")
   endif()
@@ -272,8 +272,8 @@ file(WRITE "${BoostCmakeConfig}" "# Generated automatically by: add_boost.cmake\
 if(";${BoostComponents}" MATCHES ";python")
 
   # Use either automatically detected or user set variables
-  find_package(PythonInterp)
-  find_package(PythonLibs)
+  find_package(PythonInterp 3)
+  find_package(PythonLibs 3)
   if(NOT BoostPythonExe AND NOT PYTHON_EXECUTABLE)
     message(FATAL_ERROR "Please set the BoostPythonExe variable to your Python executable.")
   elseif(NOT BoostPythonExe)
@@ -296,14 +296,14 @@ if(";${BoostComponents}" MATCHES ";python")
     if(${PYTHON_LIBRARIES_COUNT} GREATER 0)
       list(GET ${PYTHON_LIBRARIES} 0 BoostPythonLib)
     else()
-     set(BoostPythonLib ${PYTHON_LIBRARIES})
+      set(BoostPythonLib ${PYTHON_LIBRARIES})
     endif()
     get_filename_component(BoostPythonLib ${BoostPythonLib} PATH)
   endif()
 
   # Add this to user configuration (used by b2)
   file(APPEND "${BoostCmakeConfig}"
-    "using python\n    : ${BoostPythonVer}\n    : \"${BoostPythonExe}\"\n    : \"${BoostPythonInc}\"\n    : \"${BoostPythonLib}\" ;\n")
+          "using python\n    : ${BoostPythonVer}\n    : \"${BoostPythonExe}\"\n    : \"${BoostPythonInc}\"\n    : \"${BoostPythonLib}\" ;\n")
   # Need to add extra bootstrap arguments on Linux and OS X, bootstrap
   # detection of Python is flawed (e.g. wrong library directories
   # etcetera), moreover, this ends up in project-config.jam and takes
@@ -330,7 +330,7 @@ if(NOT b2Path)
   message(STATUS "Building b2 (bjam)")
   message(STATUS "  ${b2Bootstrap}")
   execute_process(COMMAND ${b2Bootstrap} WORKING_DIRECTORY ${BoostSourceDir}
-                  RESULT_VARIABLE Result OUTPUT_VARIABLE Output ERROR_VARIABLE Error)
+          RESULT_VARIABLE Result OUTPUT_VARIABLE Output ERROR_VARIABLE Error)
   file(WRITE "${BoostSourceDir}/build_bootstrap.log" "-- ARGS\n${b2Bootstrap}\n\n-- RESULT\n${Result}\n\n-- OUTPUT\n${Output}\n\n-- ERROR\n${Error}")
   if(NOT Result EQUAL "0")
     message(FATAL_ERROR "Failed running bootstrap:\n${Output}\n${Error}\n")
@@ -354,7 +354,7 @@ set(BoostSourceDir ${BoostSourceDir})
 # B2 and compiler configuration
 #
 # Set up general b2 (bjam) command line arguments
-list(APPEND b2Args --user-config=cmake-config.jam link=static,shared threading=multi --build-dir=Build stage)
+list(APPEND b2Args cxxflags=-fPIC --user-config=cmake-config.jam link=static,shared threading=multi --build-dir=Build stage)
 
 if(CMAKE_BUILD_TYPE STREQUAL "ReleaseNoInline")
   list(APPEND b2cxxflags "${RELEASENOINLINE_FLAGS}")
@@ -395,7 +395,7 @@ else()
     list(APPEND b2Args architecture=combined address-model=32_64)
     if(HAVE_LIBC++)
       list(APPEND b2Args linkflags=-stdlib=libc++)
-	  list(APPEND b2cxxflags  -stdlib=libc++)
+      list(APPEND b2cxxflags  -stdlib=libc++)
     endif()
     set(b2toolset "clang")
   elseif( BOOST_BUILD_GNU )
@@ -409,7 +409,7 @@ else()
 endif()
 string (REPLACE ";" " " b2cxxflagsstr "${b2cxxflags}")
 file(APPEND "${BoostCmakeConfig}"
-  "using ${b2toolset}\n    :\n    : \"${b2cxxexe}\"\n    : <cxxflags>\"${b2cxxflagsstr}\" ;\n")
+        "using ${b2toolset}\n    :\n    : \"${b2cxxexe}\"\n    : <cxxflags>\"${b2cxxflagsstr}\" ;\n")
 
 # Build only the necessary components
 foreach(Component ${BoostComponents})
@@ -433,9 +433,9 @@ endforeach()
 message(STATUS "Build boost (note that this may take a while, please sit back)")
 message(STATUS "  ${b2Args}")
 execute_process(COMMAND ${b2Args} WORKING_DIRECTORY ${BoostSourceDir}
-                  RESULT_VARIABLE Result OUTPUT_VARIABLE Output ERROR_VARIABLE Error)
+        RESULT_VARIABLE Result OUTPUT_VARIABLE Output ERROR_VARIABLE Error)
 file(WRITE "${BoostSourceDir}/build_b2.log"
-  "-- ARGS\n${b2Args}\n\n-- RESULT\n${Result}\n\n-- OUTPUT\n${Output}\n\n-- ERROR\n${Error}")
+        "-- ARGS\n${b2Args}\n\n-- RESULT\n${Result}\n\n-- OUTPUT\n${Output}\n\n-- ERROR\n${Error}")
 
 #
 # Copy libraries and source

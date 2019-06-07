@@ -22,6 +22,7 @@ project( TudatBundle )
 
 
 # Package options
+option(USE_TUDATPY  "Build TudatPy library (Tudat Python Interface)." ON)
 option(USE_CSPICE   "Build CSPICE libary, tudat with SPICE support and example applications." ON)
 option(USE_JSON     "Build JSON library and example applications." ON)
 option(USE_NRLMSISE00 "Build NRLMISE-00 library and tudat with NRLMSISE support." ON)
@@ -66,6 +67,13 @@ set(BoostSHA1 51421ef259a4530edea0fbfc448460fcc5c64edb)
 # set(BoostSHA1 e6dd1b62ceed0a51add3dda6f3fc3ce0f636a7f3)
 # set(BoostVersion 1.48.0)
 # set(BoostSHA1 27aced5086e96c6f7b2b684bda2bd515e115da35)
+
+if (USE_TUDATPY)
+  # Ensures boost compiles with boost.python3 support.
+  list(APPEND BoostComponents python python3)
+  # Shared-object support for tudatpy.
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+endif ()
 
 # Minimum boost version required for PagMO2 is 1.55
 if(USE_PAGMO)
@@ -170,3 +178,7 @@ if(USE_PAGMO)
 endif()
 
 add_subdirectory( "${PROJECTROOT}/tudatExampleApplications/templateApplication/TemplateApplication")
+
+if (USE_TUDATPY)
+  add_subdirectory("${PROJECTROOT}/tudatpy")
+endif ()
