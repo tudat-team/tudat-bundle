@@ -12,7 +12,6 @@
 cmake_minimum_required( VERSION 2.8.10 )
 
 # Clean cache
-
 if(EXISTS "${CMAKE_BINARY_DIR}/CMakeCache.txt")
   file(REMOVE "${CMAKE_BINARY_DIR}/CMakeCache.txt")
 endif()
@@ -20,6 +19,9 @@ endif()
 # Specific Tudat project name.
 project( TudatBundle )
 
+# ://stackoverflow.com/questions/38296756/what-is-the-idiomatic-way-in-cmake-to-add-the-fpic-compiler-option
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 
 # Package options
 option(USE_TUDATPY  "Build TudatPy library (Tudat Python Interface)." ON)
