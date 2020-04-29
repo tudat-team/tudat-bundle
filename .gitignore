@@ -69,3 +69,4 @@ boost/
 *.save
 .DS_Store
 /.idea/*
+/cmake-build-debug/*
