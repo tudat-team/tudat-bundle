@@ -78,8 +78,8 @@ if(USE_TUDATPY)
 
     set(pybind11_INCLUDE_DIR "${PROJECTROOT}pybind11/include")
     add_subdirectory("${PROJECTROOT}/pybind11/")
-    find_package(PythonInterp 3)
-    find_package(PythonLibs 3 REQUIRED)
+#    find_package(PythonInterp 3)
+#    find_package(PythonLibs 3 REQUIRED)
 
     # Ensures boost compiles with boost.python3 support.
     list(APPEND BoostComponents python3)

@@ -68,3 +68,4 @@ boost/
 *.~?~
 *.save
 .DS_Store
+/.idea/*
