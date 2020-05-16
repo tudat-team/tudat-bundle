@@ -4,39 +4,9 @@
 [submodule "tudatExampleApplications"]
 	path = tudatExampleApplications
 	url = https://github.com/Tudat/tudatExampleApplications.git
-[submodule "eigen"]
-	path = eigen
-	url = https://github.com/tudat/eigen.git
-[submodule "nrlmsise-00"]
-	path = nrlmsise-00
-	url = https://github.com/tudat/nrlmsise-00.git
 [submodule "boost"]
 	path = boost
 	url = https://github.com/boostorg/boost.git
-[submodule "sofa"]
-	path = sofa
-	url = https://github.com/tudat/sofa.git
-[submodule "json"]
-	path = json
-	url = https://github.com/tudat/json.git
-[submodule "matlabInterface"]
-	path = matlabInterface
-	url = https://github.com/tudat/tudat-matlab.git
-[submodule "nlopt"]
-	path = nlopt
-	url = https://github.com/tudat/nlopt
-[submodule "cspice"]
-	path = cspice
-	url = https://github.com/tudat/cspice.git
-[submodule "pagmo2"]
-	path = pagmo2
-	url = https://github.com/tudat/pagmo2
-[submodule "tbb"]
-	path = tbb
-	url = https://github.com/DominicDirkx/tbb
-[submodule "pybind11"]
-	path = pybind11
-	url = https://github.com/pybind/pybind11.git
 [submodule "tudatpy"]
 	path = tudatpy
 	url = https://github.com/ggarrett13/tudatpy.git
