@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="TESTing"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\anaconda3\;CMake Files\..\..\..\..\anaconda3\envs\;CMake Files\..\..\..\..\anaconda3\envs\test\;CMake Files\..\..\..\..\anaconda3\envs\test\lib\;CMake Files\..\..\..\..\anaconda3\envs\test\lib\cmake\;CMake Files\..\..\..\..\anaconda3\envs\test\lib\cmake\tudat\;CMake Files\..\..\..\..\anaconda3\envs\test\share\;CMake Files\..\..\..\..\anaconda3\envs\test\share\eigen3\;CMake Files\..\..\..\..\anaconda3\envs\test\share\eigen3\cmake\;CMake Files\examples\;CMake Files\examples\tudat\;CMake Files\examples\tudat\satellite_propagation\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="application_SinglePerturbedSatellitePropagator">
+				<Option output="/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/bin/application_SinglePerturbedSatellitePropagator" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/examples/tudat/satellite_propagation"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/ggarrett/anaconda3/envs/test/lib/cmake/tudat/../../../include"/>
+					<Add directory="/home/ggarrett/anaconda3/envs/test/include/eigen3"/>
+					<Add directory="/home/ggarrett/Repositories/new/tudatBundle/independent_test/examples/tudat/satellite_propagation"/>
+					<Add directory="/usr/include/c++/7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
+					<Add directory="/usr/include/c++/7/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/examples/tudat/satellite_propagation/Makefile&quot;  VERBOSE=1 application_SinglePerturbedSatellitePropagator"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/examples/tudat/satellite_propagation/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/examples/tudat/satellite_propagation/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/examples/tudat/satellite_propagation/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="application_SinglePerturbedSatellitePropagator/fast">
+				<Option output="/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/bin/application_SinglePerturbedSatellitePropagator" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/examples/tudat/satellite_propagation"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/ggarrett/anaconda3/envs/test/lib/cmake/tudat/../../../include"/>
+					<Add directory="/home/ggarrett/anaconda3/envs/test/include/eigen3"/>
+					<Add directory="/home/ggarrett/Repositories/new/tudatBundle/independent_test/examples/tudat/satellite_propagation"/>
+					<Add directory="/usr/include/c++/7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
+					<Add directory="/usr/include/c++/7/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/examples/tudat/satellite_propagation/Makefile&quot;  VERBOSE=1 application_SinglePerturbedSatellitePropagator/fast"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/examples/tudat/satellite_propagation/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/examples/tudat/satellite_propagation/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/examples/tudat/satellite_propagation/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="application_SingleSatellitePropagator">
+				<Option output="/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/bin/application_SingleSatellitePropagator" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/examples/tudat/satellite_propagation"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/ggarrett/anaconda3/envs/test/lib/cmake/tudat/../../../include"/>
+					<Add directory="/home/ggarrett/anaconda3/envs/test/include/eigen3"/>
+					<Add directory="/home/ggarrett/Repositories/new/tudatBundle/independent_test/examples/tudat/satellite_propagation"/>
+					<Add directory="/usr/include/c++/7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
+					<Add directory="/usr/include/c++/7/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/examples/tudat/satellite_propagation/Makefile&quot;  VERBOSE=1 application_SingleSatellitePropagator"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/examples/tudat/satellite_propagation/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/examples/tudat/satellite_propagation/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/examples/tudat/satellite_propagation/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="application_SingleSatellitePropagator/fast">
+				<Option output="/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/bin/application_SingleSatellitePropagator" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/examples/tudat/satellite_propagation"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/ggarrett/anaconda3/envs/test/lib/cmake/tudat/../../../include"/>
+					<Add directory="/home/ggarrett/anaconda3/envs/test/include/eigen3"/>
+					<Add directory="/home/ggarrett/Repositories/new/tudatBundle/independent_test/examples/tudat/satellite_propagation"/>
+					<Add directory="/usr/include/c++/7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
+					<Add directory="/usr/include/c++/7/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/examples/tudat/satellite_propagation/Makefile&quot;  VERBOSE=1 application_SingleSatellitePropagator/fast"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/examples/tudat/satellite_propagation/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/examples/tudat/satellite_propagation/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/ggarrett/Repositories/new/tudatBundle/independent_test/cmake-build-debug/examples/tudat/satellite_propagation/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/ggarrett/Repositories/new/tudatBundle/independent_test/examples/tudat/satellite_propagation/singlePerturbedSatellitePropagator.cpp">
+			<Option target="application_SinglePerturbedSatellitePropagator"/>
+		</Unit>
+		<Unit filename="/home/ggarrett/Repositories/new/tudatBundle/independent_test/examples/tudat/satellite_propagation/singleSatellitePropagator.cpp">
+			<Option target="application_SingleSatellitePropagator"/>
+		</Unit>
+		<Unit filename="/home/ggarrett/Repositories/new/tudatBundle/independent_test/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/ggarrett/Repositories/new/tudatBundle/independent_test/../../../../anaconda3/envs/test/lib/cmake/tudat/tudat-config-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\anaconda3\envs\test\lib\cmake\tudat\"/>
+		</Unit>
+		<Unit filename="/home/ggarrett/Repositories/new/tudatBundle/independent_test/../../../../anaconda3/envs/test/lib/cmake/tudat/tudat-config.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\anaconda3\envs\test\lib\cmake\tudat\"/>
+		</Unit>
+		<Unit filename="/home/ggarrett/Repositories/new/tudatBundle/independent_test/../../../../anaconda3/envs/test/lib/cmake/tudat/tudat_targets-debug.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\anaconda3\envs\test\lib\cmake\tudat\"/>
+		</Unit>
+		<Unit filename="/home/ggarrett/Repositories/new/tudatBundle/independent_test/../../../../anaconda3/envs/test/lib/cmake/tudat/tudat_targets.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\anaconda3\envs\test\lib\cmake\tudat\"/>
+		</Unit>
+		<Unit filename="/home/ggarrett/Repositories/new/tudatBundle/independent_test/../../../../anaconda3/envs/test/share/eigen3/cmake/Eigen3Config.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\anaconda3\envs\test\share\eigen3\cmake\"/>
+		</Unit>
+		<Unit filename="/home/ggarrett/Repositories/new/tudatBundle/independent_test/../../../../anaconda3/envs/test/share/eigen3/cmake/Eigen3ConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\anaconda3\envs\test\share\eigen3\cmake\"/>
+		</Unit>
+		<Unit filename="/home/ggarrett/Repositories/new/tudatBundle/independent_test/../../../../anaconda3/envs/test/share/eigen3/cmake/Eigen3Targets.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\anaconda3\envs\test\share\eigen3\cmake\"/>
+		</Unit>
+		<Unit filename="/home/ggarrett/Repositories/new/tudatBundle/independent_test/examples/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\examples\"/>
+		</Unit>
+		<Unit filename="/home/ggarrett/Repositories/new/tudatBundle/independent_test/examples/tudat/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\examples\tudat\"/>
+		</Unit>
+		<Unit filename="/home/ggarrett/Repositories/new/tudatBundle/independent_test/examples/tudat/satellite_propagation/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\examples\tudat\satellite_propagation\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

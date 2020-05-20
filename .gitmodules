@@ -1,12 +1,12 @@
 [submodule "tudat"]
 	path = tudat
 	url = https://github.com/Tudat/tudat.git
-[submodule "tudatExampleApplications"]
-	path = tudatExampleApplications
-	url = https://github.com/Tudat/tudatExampleApplications.git
-[submodule "boost"]
-	path = boost
-	url = https://github.com/boostorg/boost.git
 [submodule "tudatpy"]
 	path = tudatpy
 	url = https://github.com/ggarrett13/tudatpy.git
+[submodule "sofa"]
+	path = sofa
+	url = https://github.com/ggarrett13/sofa.git
+[submodule "nrlmsise-00"]
+	path = nrlmsise-00
+	url = https://github.com/ggarrett13/nrlmsise-00.git
