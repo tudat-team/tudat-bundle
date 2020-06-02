@@ -10,3 +10,9 @@
 [submodule "nrlmsise-00"]
 	path = nrlmsise-00
 	url = https://github.com/ggarrett13/nrlmsise-00.git
+[submodule "cspice"]
+	path = cspice
+	url = https://github.com/ggarrett13/cspice.git
+[submodule "eigen"]
+	path = eigen
+	url = https://github.com/Tudat/eigen.git
