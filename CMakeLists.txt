@@ -62,3 +62,6 @@ set(Tudat_BUILD_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/tudat/include")
 # TudatPy project.
 set(pybind11_DIR "${CMAKE_CURRENT_SOURCE_DIR}/pybind11/share/cmake/pybind11/")
 add_subdirectory(tudatpy)
+
+
+#-DCMAKE_INSTALL_PREFIX="/home/ggarrett/Repositories/new/tudat_bundle/install_test" -Dpybind11_DIR="/home/ggarrett/Repositories/new/tudat_bundle/pybind11/share/cmake/pybind11" -DBoost_NO_SYSTEM_PATHS=ON -DBOOST_ROOT="/home/ggarrett/anaconda3/envs/test"
