@@ -10,6 +10,15 @@ jobs:
         name: Build and test
         command: bash ./tools/circleci_bionic_gcc7_coverage.sh
 
+  bionic_clang6_release:
+    docker:
+      - image: circleci/buildpack-deps:bionic
+    steps:
+      - checkout
+      - run:
+          name: Build and test
+          command: bash ./tools/circleci_bionic_clang6_release.sh
+
 workflows:
   version: 2
   all_builds:

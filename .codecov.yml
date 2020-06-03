@@ -1,0 +1,22 @@
+coverage:
+  ignore:
+    - "boost/.*"
+    - "cspice/.*"
+    - "eigen/.*"
+    - "external/.*"
+    - "nrlmsise-00/.*"
+    - "pybind11/.*"
+    - "sofa/.*"
+    - "staged-recipes/.*"
+    - "tools/.*"
+    - "tutorials/.*"
+    # Exclude these large datafiles.
+    - "tudat/data/.*"
+
+#  notify:
+#    gitter:
+#      default:
+#        url: "https://webhooks.gitter.im/e/370824261ddf671fe05a"
+#        threshold: 1%
+
+comment: off
