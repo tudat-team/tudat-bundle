@@ -1,6 +1,6 @@
-[![](https://github.com/Tudat/tudatBundle/workflows/tudatBundleCI/badge.svg)](https://github.com/Tudat/tudatBundle/actions)
 
-# Tudat Bundle
+[![Build Status](https://img.shields.io/circleci/project/github/ggarrett13/tudatBundle/master.svg?style=for-the-badge&logo=circleci)](https://circleci.com/gh/ggarrett13/tudatBundle)
+
 The Tudat bundle contains Tudat and a number of external libraries in a modular fashion. The TU Delft Astrodynamics Toolbox (Tudat) is a set of C++ software libraries for simulating various astrodynamics applications, for more info see [the Tudat website](http://tudat.tudelft.nl).
 
 ## Instructions
