@@ -10,6 +10,9 @@ set -e
 #sudo apt-get install build-essential cmake libboost-dev libboost-serialization-dev libboost-test-dev libnlopt-dev libeigen3-dev coinor-libipopt-dev curl libtbb-dev
 sudo apt-get install build-essential cmake
 
+# Initialise submodules for tudat-bundle.
+git submodule update --init --recursive
+
 # Create the build dir and cd into it.
 mkdir build
 cd build
