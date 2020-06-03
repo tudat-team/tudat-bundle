@@ -82,8 +82,6 @@ add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS)
 # Eigen dependency.
 #list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/eigen/cmake)
 #add_subdirectory(eigen)
-#find_package(Eigen3 REQUIRED)
-#set(EIGEN3_INCLUDE_DIRS ${EIGEN3_INCLUDE_DIR})
 
 # CSpice project.
 add_subdirectory(cspice)
