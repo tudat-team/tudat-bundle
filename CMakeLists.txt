@@ -20,6 +20,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 #set(COMPILE_FLAGS "${CMAKE_CXX_FLAGS} -D_GLIBCXX_USE_CXX11_ABI=0")
 
 # Clean cache
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GLIBCXX_USE_CXX11_ABI=0")
 
 if(EXISTS "${CMAKE_BINARY_DIR}/CMakeCache.txt")
     file(REMOVE "${CMAKE_BINARY_DIR}/CMakeCache.txt")
@@ -37,7 +38,46 @@ set(BoostComponents filesystem system regex date_time thread
         serialization chrono atomic unit_test_framework)
 set(BoostVersion 1.64.0)
 set(BoostSHA1 51421ef259a4530edea0fbfc448460fcc5c64edb)
+
+#SET (Boost_FIND_REQUIRED TRUE)
+#SET (Boost_FIND_QUIETLY TRUE)
+#set (Boost_USE_MULTITHREADED TRUE)
+#set (Boost_USE_STATIC_LIBS TRUE)
+
 include(add_boost)
+#list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/boost/stage/lib/cmake/Boost-1.73.0")
+
+#set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/boost/stage/lib/cmake")
+#
+
+
+#SET (Boost_ADDITIONAL_VERSIONS "1.39" "1.39.0")
+
+
+#SET(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/boost/stage")
+#SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/boost/stage/lib/cmake/Boost-1.73.0")
+
+
+
+FIND_PACKAGE(Boost REQUIRED COMPONENTS ${BoostComponenets})
+IF (Boost_FOUND)
+    INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
+    ADD_DEFINITIONS( "-DHAS_BOOST" )
+ENDIF()
+
+message(STATUS HI ---- ${Boost_LIBRARIES})
+message(STATUS HI ---- ${Boost_unit_test_framework_LIBRARY})
+
+
+
+#find_package(Boost REQUIRED COMPONENTS ${BoostComponents})
+#message(Boost_LIBS ${Boost_LIBRARIES})
+
+message(STATUS Boost_VERSION_MAJOR:${Boost_VERSION_MAJOR})
+message(STATUS Boost_VERSION_MINOR:${Boost_VERSION_MINOR})
+
+# Silence Deprecated bind placeholders in tests.
+add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS)
 
 # Eigen dependency.
 #list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/eigen/cmake)

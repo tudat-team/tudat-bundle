@@ -16,3 +16,6 @@
 [submodule "eigen"]
 	path = eigen
 	url = https://github.com/Tudat/eigen.git
+[submodule "staged-recipes"]
+	path = staged-recipes
+	url = https://github.com/ggarrett13/staged-recipes.git
