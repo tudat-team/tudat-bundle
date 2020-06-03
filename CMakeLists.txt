@@ -82,8 +82,8 @@ add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS)
 # Eigen dependency.
 #list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/eigen/cmake)
 #add_subdirectory(eigen)
-find_package(Eigen3 REQUIRED)
-set(EIGEN3_INCLUDE_DIRS ${EIGEN3_INCLUDE_DIR})
+#find_package(Eigen3 REQUIRED)
+#set(EIGEN3_INCLUDE_DIRS ${EIGEN3_INCLUDE_DIR})
 
 # CSpice project.
 add_subdirectory(cspice)
@@ -100,8 +100,8 @@ add_subdirectory(tudat)
 set(Tudat_BUILD_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/tudat/include")
 
 # TudatPy project.
-set(pybind11_DIR "${CMAKE_CURRENT_SOURCE_DIR}/pybind11/share/cmake/pybind11/")
-add_subdirectory(tudatpy)
+#set(pybind11_DIR "${CMAKE_CURRENT_SOURCE_DIR}/pybind11/share/cmake/pybind11/")
+#add_subdirectory(tudatpy)
 
 
 #-DCMAKE_INSTALL_PREFIX="/home/ggarrett/Repositories/new/tudat_bundle/install_test" -Dpybind11_DIR="/home/ggarrett/Repositories/new/tudat_bundle/pybind11/share/cmake/pybind11" -DBoost_NO_SYSTEM_PATHS=ON -DBOOST_ROOT="/home/ggarrett/anaconda3/envs/test"
