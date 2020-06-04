@@ -8,7 +8,9 @@ jobs:
       - checkout
       - run:
           name: Build and test
-            command: git submodule update --init --recursive && bash ./tools/circleci_bionic_gcc7_coverage.sh
+          command: >-
+            git submodule update --init --recursive
+            bash ./tools/circleci_bionic_gcc7_coverage.sh
 
   bionic_clang6_release:
     docker:
@@ -17,7 +19,9 @@ jobs:
       - checkout
       - run:
           name: Build and test
-          command: git submodule update --init --recursive && bash ./tools/circleci_bionic_clang6_release.sh
+          command: >-
+            git submodule update --init --recursive
+            bash ./tools/circleci_bionic_clang6_release.sh
 
   macosx_xcode_11_release:
     macos:
@@ -26,10 +30,9 @@ jobs:
       - checkout
       - run:
           name: Build and test
-          command: git submodule update --init --recursive && bash ./tools/circleci_macosx_xcode_11_release.sh
-
-
-
+          command: >-
+            git submodule update --init --recursive
+            bash ./tools/circleci_macosx_xcode_11_release.sh
 
 workflows:
   version: 2
