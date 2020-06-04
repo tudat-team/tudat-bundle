@@ -23,16 +23,16 @@ jobs:
             git submodule update --init --recursive
             bash ./tools/circleci_bionic_clang6_release.sh
 
-  macosx_xcode_11_release:
-    macos:
-      xcode: "11.3.0"
-    steps:
-      - checkout
-      - run:
-          name: Build and test
-          command: >-
-            git submodule update --init --recursive
-            bash ./tools/circleci_macosx_xcode_11_release.sh
+#  macosx_xcode_11_release:
+#    macos:
+#      xcode: "11.3.0"
+#    steps:
+#      - checkout
+#      - run:
+#          name: Build and test
+#          command: >-
+#            git submodule update --init --recursive
+#            bash ./tools/circleci_macosx_xcode_11_release.sh
 
 workflows:
   version: 2
@@ -40,4 +40,4 @@ workflows:
     jobs:
       - bionic_gcc7_coverage
       - bionic_clang6_release
-      - macosx_xcode_11_release
+#      - macosx_xcode_11_release
