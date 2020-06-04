@@ -14,7 +14,7 @@ mkdir build
 cd build
 
 # Clang release build.
-CXX=clang++ CC=clang cmake ../../ -DCMAKE_BUILD_TYPE=Release
+CXX=clang++ CC=clang cmake ../ -DCMAKE_BUILD_TYPE=Release
 make -j2 VERBOSE=1
 ctest -V
 
