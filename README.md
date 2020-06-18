@@ -1,5 +1,6 @@
 
-[![Build Status](https://img.shields.io/circleci/project/github/ggarrett13/tudat-bundle/master.svg?style=for-the-badge&logo=circleci)](https://circleci.com/gh/ggarrett13/tudat-bundle)
+[![Build Status](https://img.shields.io/travis/tudat-team/tudat-bundle/master.svg?logo=travis&style=for-the-badge)](https://travis-ci.org/tudat-team/tudat-bundle)
+[![Build Status](https://img.shields.io/circleci/project/github/team-tudat/tudat-bundle/master.svg?style=for-the-badge&logo=circleci)](https://circleci.com/gh/team-tudat/tudat-bundle)
 
 
 
