@@ -19,3 +19,6 @@
 [submodule "staged-recipes"]
 	path = staged-recipes
 	url = https://github.com/ggarrett13/staged-recipes.git
+[submodule "tudat-resources"]
+	path = tudat-resources
+	url = https://github.com/tudat-team/tudat-resources.git
