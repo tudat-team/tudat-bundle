@@ -56,7 +56,7 @@ add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS)
 set(EIGEN3_BUILD_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/eigen/)
 
 # CSpice project.
-add_subdirectory(cspice)
+add_subdirectory(cspice-cmake)
 set(CSpice_BUILD_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/cspice/include")
 
 add_subdirectory(tudat-resources)
@@ -64,7 +64,7 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/tudat-resources/include")
 include_directories("${CMAKE_BINARY_DIR}/tudat-resources/include")
 
 # Sofa project.
-add_subdirectory(sofa)
+add_subdirectory(sofa-cmake)
 set(Sofa_BUILD_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/sofa/include")
 
 # Tudat project.

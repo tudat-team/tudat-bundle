@@ -19,3 +19,6 @@
 [submodule "cspice-cmake"]
 	path = cspice-cmake
 	url = https://github.com/tudat-team/cspice-cmake.git
+[submodule "sofa-cmake"]
+	path = sofa-cmake
+	url = https://github.com/tudat-team/sofa-cmake.git
