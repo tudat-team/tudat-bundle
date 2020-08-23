@@ -9,7 +9,7 @@
 
 
 # Specify minimum CMake version required to compile Tudat.
-cmake_minimum_required( VERSION 2.8.10 )
+cmake_minimum_required(VERSION 2.8.10)
 
 cmake_policy(SET CMP0069 NEW)
 
@@ -21,12 +21,15 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 # Clean cache
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GLIBCXX_USE_CXX11_ABI=0")
 
-if(EXISTS "${CMAKE_BINARY_DIR}/CMakeCache.txt")
+if (EXISTS "${CMAKE_BINARY_DIR}/CMakeCache.txt")
     file(REMOVE "${CMAKE_BINARY_DIR}/CMakeCache.txt")
-endif()
+endif ()
+
+option(TUDATPY_SUBSUBMODULES 1)
+add_definitions(-DTUDATPY_SUBSUBMODULES=${TUDATPY_SUBSUBMODULES})
 
 # Specific Tudat project name.
-project( TudatBundle )
+project(TudatBundle)
 
 # Add local module path
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules/")
@@ -41,8 +44,8 @@ message(CMAKE_INSTALL_PREFIX:${CMAKE_INSTALL_PREFIX})
 FIND_PACKAGE(Boost REQUIRED COMPONENTS ${BoostComponenets})
 IF (Boost_FOUND)
     INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
-    ADD_DEFINITIONS( "-DHAS_BOOST" )
-ENDIF()
+    ADD_DEFINITIONS("-DHAS_BOOST")
+ENDIF ()
 
 message(STATUS Boost_VERSION_MAJOR:${Boost_VERSION_MAJOR})
 message(STATUS Boost_VERSION_MINOR:${Boost_VERSION_MINOR})
