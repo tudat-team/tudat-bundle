@@ -11,6 +11,8 @@
 # Specify minimum CMake version required to compile Tudat.
 cmake_minimum_required(VERSION 2.8.10)
 
+set(CMAKE_PREFIX_PATH "/home/dominic/anaconda3/envs/tudat-devel-boost/")
+
 cmake_policy(SET CMP0069 NEW)
 
 # https://stackoverflow.com/questions/30380257/how-can-ld-library-path-be-changed-within-cmake

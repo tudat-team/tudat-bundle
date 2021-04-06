@@ -1,21 +1,9 @@
 [submodule "tudat"]
 	path = tudat
-	url = https://github.com/Tudat/tudat.git
+	url = https://github.com/tudat-team/tudat.git
 [submodule "tudatpy"]
 	path = tudatpy
-	url = https://github.com/ggarrett13/tudatpy.git
-[submodule "nrlmsise-00"]
-	path = nrlmsise-00
-	url = https://github.com/ggarrett13/nrlmsise-00.git
-[submodule "eigen"]
-	path = eigen
-	url = https://github.com/Tudat/eigen.git
+	url = https://github.com/tudat-team/tudatpy.git
 [submodule "tudat-resources"]
 	path = tudat-resources
 	url = https://github.com/tudat-team/tudat-resources.git
-[submodule "cspice-cmake"]
-	path = cspice-cmake
-	url = https://github.com/tudat-team/cspice-cmake.git
-[submodule "sofa-cmake"]
-	path = sofa-cmake
-	url = https://github.com/tudat-team/sofa-cmake.git
