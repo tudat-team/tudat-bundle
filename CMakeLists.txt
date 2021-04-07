@@ -12,6 +12,7 @@
 cmake_minimum_required(VERSION 2.8.10)
 
 set(CMAKE_PREFIX_PATH "/home/dominic/anaconda3/envs/tudat-devel-boost/")
+set(Boost_NO_BOOST_CMAKE ON)
 
 cmake_policy(SET CMP0069 NEW)
 
@@ -56,21 +57,11 @@ message(STATUS Boost_VERSION_MINOR:${Boost_VERSION_MINOR})
 add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS)
 
 # Eigen dependency.
-#list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/eigen/cmake)
-#add_subdirectory(eigen)
 set(EIGEN3_BUILD_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/eigen/)
-
-# CSpice project.
-add_subdirectory(cspice-cmake)
-set(CSpice_BUILD_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/cspice/include")
 
 add_subdirectory(tudat-resources)
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/tudat-resources/include")
 include_directories("${CMAKE_BINARY_DIR}/tudat-resources/include")
-
-# Sofa project.
-add_subdirectory(sofa-cmake)
-set(Sofa_BUILD_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/sofa/include")
 
 # Tudat project.
 add_subdirectory(tudat)
@@ -80,3 +71,10 @@ set(Tudat_BUILD_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/tudat/include")
 set(pybind11_BUILD_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/pybind11/include)
 add_subdirectory(pybind11)
 add_subdirectory(tudatpy)
+
+
+# CSpice project.
+find_package(cspice)
+
+# Sofa project.
+find_package(sofa)
