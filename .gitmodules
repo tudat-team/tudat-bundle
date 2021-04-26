@@ -4,3 +4,6 @@
 [submodule "tudatpy"]
 	path = tudatpy
 	url = https://github.com/tudat-team/tudatpy.git
+[submodule "tudat-docstrings"]
+	path = tudat-docstrings
+	url = https://github.com/tudat-team/tudat-docstrings.git

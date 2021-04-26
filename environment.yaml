@@ -9,7 +9,14 @@ dependencies:
   - sofa-cmake
   - cspice-cmake
   - python=3.8
-  - pybind11
-  - pybind11-abi
-  - numpy
-  - pytest
+  - pybind11 # for compiling tudatpy
+  - pybind11-abi # for compiling tudatpy
+  - numpy # for running tudatpy
+  - pytest # for testing tudatpy
+  - pyyaml # for tudat-docstrings
+  - jinja2 # for tudat-docstrings
+  - numpydoc
+#  - pip
+#  pip:
+#     - rtcat-sphinx-theme
+#    - sphinx_rtd_theme
