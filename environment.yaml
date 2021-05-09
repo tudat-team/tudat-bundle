@@ -15,7 +15,10 @@ dependencies:
   - pytest # for testing tudatpy
   - pyyaml # for tudat-docstrings
   - jinja2 # for tudat-docstrings
+  - matplotlib # for tudat.plotting
+  - basemap # for tudat.plotting
   - numpydoc
+  - doxygen # for cpp api
 #  - pip
 #  pip:
 #     - rtcat-sphinx-theme
