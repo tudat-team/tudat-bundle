@@ -59,6 +59,7 @@ if __name__ == "__main__":
 
     # Source and destination directories
     build_dir = Path(ARGUMENTS["BUILD_DIR"]).resolve()
+    build_dir.mkdir(parents=True, exist_ok=True)
     tudat_dir = (build_dir.parent / "tudat").resolve()
     tudatpy_dir = (build_dir.parent / "tudatpy").resolve()
     conda_prefix = Path(ENVIRONMENT["CONDA_PREFIX"]).resolve()
