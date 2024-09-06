@@ -1,8 +1,26 @@
 import sys
 from pathlib import Path
 import os
+import argparse
+
+# Globals
+CONDA_PREFIX = Path(os.environ["CONDA_PREFIX"]).resolve()
+
+# Define argument parser
+parser = argparse.ArgumentParser(
+    prog="install.py",
+    description="Install Tudat and TudatPy in active conda environment",
+)
+parser.add_argument(
+    "--build-dir",
+    metavar="<path>",
+    type=str,
+    default="build",
+    help="Build directory",
+)
 
 
+# Editable installation
 def install(src: Path, dst: Path, manifest, iterate: bool = False) -> None:
     """Create symbolic link from source to destination and log in manifest.
 
@@ -31,38 +49,16 @@ def install(src: Path, dst: Path, manifest, iterate: bool = False) -> None:
     return None
 
 
-def usage() -> None:
-    """Print usage information."""
-    print("Usage: python install.py [OPTIONS]", end="\n\n")
-    print("Options:")
-    print("  --build-dir <path>  Select build directory")
-    print("  --help, -h          Display this information")
-    return None
-
-
 if __name__ == "__main__":
 
-    ENVIRONMENT = os.environ
-    ARGUMENTS = {"BUILD_DIR": "build"}
-
-    # Define arguments
-    args = iter(sys.argv[1:])
-    for arg in args:
-        if arg == "--build-dir":
-            ARGUMENTS["BUILD_DIR"] = next(args)
-        elif arg in ("--help", "-h"):
-            usage()
-            exit(0)
-        else:
-            usage()
-            raise ValueError("Invalid argument")
+    # Parse arguments
+    args = parser.parse_args()
 
     # Source and destination directories
-    build_dir = Path(ARGUMENTS["BUILD_DIR"]).resolve()
+    build_dir = Path(args.build_dir).resolve()
     build_dir.mkdir(parents=True, exist_ok=True)
     tudat_dir = (build_dir.parent / "tudat").resolve()
     tudatpy_dir = (build_dir.parent / "tudatpy").resolve()
-    conda_prefix = Path(ENVIRONMENT["CONDA_PREFIX"]).resolve()
     pylib_prefix = (
         Path(sys.exec_prefix)
         / sys.platlibdir
@@ -74,25 +70,25 @@ if __name__ == "__main__":
     with open(build_dir / "custom-manifest.txt", "w") as manifest:
 
         # Tudat static libraries
-        install(build_dir / "lib", conda_prefix / "lib", manifest, iterate=True)
+        install(build_dir / "lib", CONDA_PREFIX / "lib", manifest, iterate=True)
 
         # Tudat headers
         # (conda_prefix / "include/tudat").mkdir(parents=True, exist_ok=True)
         # No need to create include/tudat. It is created by tudat-resources
         install(
             build_dir / "tudat/include/tudat/config.hpp",
-            conda_prefix / "include/tudat/config.hpp",
+            CONDA_PREFIX / "include/tudat/config.hpp",
             manifest,
         )
         for item in (tudat_dir / "include/tudat").iterdir():
-            install(item, conda_prefix / "include/tudat" / item.name, manifest)
+            install(item, CONDA_PREFIX / "include/tudat" / item.name, manifest)
 
         # Tudat cmake files
-        (conda_prefix / "lib/cmake/tudat").mkdir(parents=True, exist_ok=True)
+        (CONDA_PREFIX / "lib/cmake/tudat").mkdir(parents=True, exist_ok=True)
         for item in (build_dir / "tudat").iterdir():
             if item.suffix == ".cmake" and "tudat" in item.name.lower():
-                install(item, conda_prefix / "lib/cmake/tudat" / item.name, manifest)
-        manifest.write(str(conda_prefix / "lib/cmake/tudat") + "\n")
+                install(item, CONDA_PREFIX / "lib/cmake/tudat" / item.name, manifest)
+        manifest.write(str(CONDA_PREFIX / "lib/cmake/tudat") + "\n")
 
         # Tudatpy
         install(
@@ -108,21 +104,3 @@ if __name__ == "__main__":
                 pylib_prefix / "tudatpy-stubs",
                 manifest,
             )
-
-        # (pylib_prefix / "tudatpy").mkdir(parents=True, exist_ok=True)
-
-        # # install(
-        # #     build_dir / "tudatpy/tudatpy/_version.py",
-        # #     pylib_prefix / "tudatpy/_version.py",
-        # #     manifest,
-        # # )
-
-        # install(
-        #     build_dir / "tudatpy/tudatpy/kernel.so",
-        #     pylib_prefix / "tudatpy/kernel.so",
-        #     manifest,
-        # )
-
-        # for item in (tudatpy_dir / "tudatpy").iterdir():
-        #     if item.name not in ("_version.py.in", "CMakeLists.txt", "__pycache__"):
-        #         install(item, pylib_prefix / "tudatpy" / item.name, manifest)

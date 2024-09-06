@@ -1,224 +1,320 @@
-import sys
+import argparse
+import os
 from pathlib import Path
 from contextlib import chdir
 import subprocess
-import os
+import ast
+
+# Globals
+TUDATPY_ROOT = Path("tudatpy/src/tudatpy").absolute()
+STUBS_ROOT = Path("tudatpy/src/tudatpy-stubs").absolute()
+CONDA_PREFIX = os.environ["CONDA_PREFIX"]
+
+# Define argument parser
+parser = argparse.ArgumentParser(
+    prog="build.py",
+    description="Build Tudat, TudatPy and generate stubs",
+)
+
+parser.add_argument(
+    "-j", metavar="<cores>", type=int, default=1, help="Number of processors to use"
+)
+parser.add_argument(
+    "-c",
+    "--clean",
+    action="store_true",
+    help="Clean after build",
+)
+parser.add_argument(
+    "--build-dir",
+    metavar="<path>",
+    type=str,
+    default="build",
+    help="Build directory",
+)
+parser.add_argument(
+    "--build-type",
+    metavar="<type>",
+    default="Release",
+    help="Build type: Release, Debug",
+)
+parser.add_argument(
+    "--no-tests",
+    dest="tests",
+    action="store_false",
+    help="Build Tudat tests",
+)
+parser.add_argument(
+    "--no-sofa",
+    dest="sofa",
+    action="store_false",
+    help="Build without SOFA",
+)
+parser.add_argument(
+    "--no-nrlmsise00",
+    dest="nrlmsise00",
+    action="store_false",
+    help="Build without NRLMSISE00",
+)
+parser.add_argument(
+    "--json",
+    dest="json",
+    action="store_true",
+    help="Build with JSON interface",
+)
+parser.add_argument(
+    "--pagmo",
+    action="store_true",
+    help="Build with PaGMO",
+)
+parser.add_argument(
+    "--extended-precision",
+    action="store_true",
+    help="Build with extended precision propagation tools",
+)
+
+# Choose what to compile
+parser.add_argument(
+    "--no-compile",
+    dest="compile",
+    action="store_false",
+    help="Skip compilation of tudat and tudatpy",
+)
+parser.add_argument(
+    "--stubs",
+    action="store_true",
+    help="Generate stubs for tudatpy",
+)
+parser.add_argument(
+    "--cxx-standard",
+    metavar="<standard>",
+    default="14",
+    help="C++ standard",
+)
 
 
-def usage() -> None:
-    """Print usage information for the script."""
+# Stub generation
+def generate_init_stub(module_path: Path) -> None:
 
-    print("Usage: python build.py [OPTIONS]", end="\n\n")
-    print("Options:")
-    print("  -h | --help                 Show this message")
-    print("  -j                          Number of processors to use [Default: 1]")
-    print("  -c | --clean                Clean after build")
-    print("  --build-dir                 Build directory [Default: build]")
-    print("  --no-tests                  Don't build tests")
-    print("  --cxx-std                   C++ standard for compilation [Default: 14]")
-    print(
-        "  --build-type                Release, Debug, RelWithDebInfo [Default: Release]"
-    )
-    print("  --no-stubs                  Don't generate stubs for tudatpy")
-    print("  -v | --verbose              Verbose output")
+    # Define path to stub file
+    stub_path = module_path.relative_to(TUDATPY_ROOT)
+    stub_path = STUBS_ROOT / f"{stub_path}/__init__.pyi"
 
+    # Parse __init__ file
+    with open(module_path / "__init__.py") as src:
+        content = ast.parse(src.read())
 
-def generate_init_stub(import_path) -> None:
+    import_statements = []
+    init_content = []
+    all_statement = None
+    for statement in content.body:
 
-    # Get path from import path
-    source_dir = Path(f"tudatpy-stubs/{import_path.replace('.', '/')}")
+        if isinstance(statement, ast.Import):
+            raise NotImplementedError("Import statement not supported yet")
 
-    out = ""
-    all_content = []
+        elif isinstance(statement, ast.ImportFrom):
+            import_statements.append(statement)
 
-    # Add elements from expose_ if it exists
-    if (source_dir / f"expose_{source_dir.name}.pyi").exists():
+        elif isinstance(statement, ast.Assign):
+            if not len(statement.targets) == 1:
+                continue
+            if not isinstance(statement.targets[0], ast.Name):
+                continue
+            if not statement.targets[0].id == "__all__":
+                continue
 
-        with (source_dir / f"expose_{source_dir.name}.pyi").open() as f:
+            all_statement = statement
+            break
 
-            all = ""
-            for line in f:
-                if "__all__" in line:
-                    all = line
-                    break
-            content = all.split("=")[1].strip()[1:-1].split(", ")
-            out += f"from .expose_{source_dir.name} import (\n"
-            for item in content:
-                out += f"\t{item[1:-1]},\n"
-            out += ")\n\n"
+        else:
+            print(type(statement), statement._fields)
 
-        for item in content:
-            all_content.append(item)
+    # Add import statements to init contents
+    for statement in import_statements:
+        init_content.append(statement)
 
-    # Add submodules if they exist
-    submodules = []
-    for item in source_dir.iterdir():
-        if item.is_dir():
-            submodules.append(f"'{item.name}'")
+    # Import submodules
+    submodule_list = []
+    for submodule in module_path.iterdir():
+        if submodule.is_dir() and (submodule / "__init__.py").exists():
+            submodule_list.append(submodule)
 
-    if len(submodules) > 0:
-        out += "from . import (\n"
-        for item in submodules:
-            out += f"\t{item[1:-1]},\n"
-            all_content.append(item)
-        out += ")\n\n"
+    if len(submodule_list) > 0:
+        import_submodules_statement = ast.ImportFrom(
+            module="",
+            level=1,
+            names=[ast.alias(name=submodule.name) for submodule in submodule_list],
+        )
+        init_content.append(import_submodules_statement)
 
-    # Add __all__ statement
-    out += "__all__ = [\n"
-    for item in all_content:
-        out += f"\t{item},\n"
-    out += "]\n"
+    # Add __all__ statement to init contents
+    if all_statement is not None:
+        assert isinstance(all_statement.value, ast.List)
+        all_statement.value.elts.extend(
+            [ast.Constant(submodule.name) for submodule in submodule_list]
+        )
+    else:
+        all_statement = ast.parse(
+            "__all__ = ["
+            + ", ".join([f"'{submodule.name}'" for submodule in submodule_list])
+            + "]"
+        ).body[0]
 
-    with open(f"{source_dir}/__init__.pyi", "w") as f:
-        for line in out.split("\n"):
-            f.write(line + "\n")
+    init_content.append(all_statement)
+
+    # Generate __init__.pyi
+    init_module = ast.Module(body=init_content, type_ignores=[])
+    stub_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(stub_path, "w") as f:
+        f.write(ast.unparse(init_module))
 
     return None
 
 
-if __name__ == "__main__":
+def clean_autogenerated_stub(import_path: str) -> None:
 
-    ARGUMENTS = {
-        "NUMBER_OF_PROCESSORS": 1,
-        "CLEAN_BUILD": False,
-        "BUILD_DIR": "build",
-        "BUILD_TESTS": True,
-        "RUN_TESTS": True,
-        "CXX_STANDARD": "14",
-        "BUILD_TYPE": "Release",
-        "GENERATE_STUBS": True,
-        "VERBOSE": False,
-    }
-    CONDA_PREFIX = os.environ["CONDA_PREFIX"]
+    stub_path = STUBS_ROOT / Path("/".join(import_path.split(".")[1:])).with_suffix(
+        ".pyi"
+    )
 
-    # Parse input
-    args = iter(sys.argv[1:])
-    for arg in args:
-        if arg in ("-h", "--help"):
-            usage()
-            exit(0)
-        elif arg == "-j":
-            ARGUMENTS["NUMBER_OF_PROCESSORS"] = next(args)
-        elif arg in ("-c", "--clean"):
-            ARGUMENTS["CLEAN_BUILD"] = True
-        elif arg == "--build-dir":
-            ARGUMENTS["BUILD_DIR"] = next(args)
-        elif arg == "--no-tests":
-            ARGUMENTS["BUILD_TESTS"] = False
-        elif arg == "--cxx-std":
-            ARGUMENTS["CXX_STANDARD"] = next(args)
-        elif arg == "--build-type":
-            ARGUMENTS["BUILD_TYPE"] = next(args)
-        elif arg == "--no-stubs":
-            ARGUMENTS["GENERATE_STUBS"] = False
-        elif arg in ("-v", "--verbose"):
-            ARGUMENTS["VERBOSE"] = True
-        else:
-            print("Invalid command")
-            usage()
-            exit(1)
+    with open(stub_path) as f:
+        content = ast.parse(f.read())
 
-    # Ensure build directory exists
-    build_dir = Path(ARGUMENTS["BUILD_DIR"]).resolve()
-    build_dir.mkdir(parents=True, exist_ok=True)
+    includes_typing = False
+    for statement in content.body:
 
-    # Build
-    with chdir(build_dir):
+        if isinstance(statement, ast.ImportFrom):
+            if statement.module == "__future__":
+                content.body.remove(statement)
+
+        if isinstance(statement, ast.Import):
+            for alias in statement.names:
+                if alias.name == "typing":
+                    includes_typing = True
+                    break
+
+    if not includes_typing:
+        content.body.insert(0, ast.Import([ast.alias("typing")]))
+
+    with open(stub_path, "w") as f:
+        f.write(ast.unparse(content))
+
+    return None
+
+
+def generate_module_stubs(module_path: Path) -> None:
+
+    if not (module_path / "__init__.py").exists():
+        return None
+
+    with open(module_path / "__init__.py") as f:
+        if len(f.read()) == 0:
+            return None
+
+    import_path = (
+        f'tudatpy.{str(module_path.relative_to(TUDATPY_ROOT)).replace("/", ".")}'
+    )
+
+    print(f"Generating stubs for {import_path}...")
+
+    # Generate stubs for extensions
+    for extension in module_path.glob("*.so"):
+        extension_import_path = f"{import_path}.{extension.name.split('.')[0]}"
         outcome = subprocess.run(
             [
-                "cmake",
-                f"-DCMAKE_PREFIX_PATH={CONDA_PREFIX}",
-                f"-DCMAKE_INSTALL_PREFIX={CONDA_PREFIX}",
-                f'-DCMAKE_CXX_STANDARD={ARGUMENTS["CXX_STANDARD"]}',
-                "-DBoost_NO_BOOST_CMAKE=ON",
-                f'-DCMAKE_BUILD_TYPE={ARGUMENTS["BUILD_TYPE"]}',
-                f'-DTUDAT_BUILD_TESTS={ARGUMENTS["BUILD_TESTS"]}',
-                "..",
+                "pybind11-stubgen",
+                extension_import_path,
+                "-o",
+                ".",
+                "--root-suffix=-stubs",
+                "--numpy-array-remove-parameters",
             ]
         )
         if outcome.returncode:
             exit(outcome.returncode)
 
-        build_command = ["cmake", "--build", "."]
-        if ARGUMENTS["CLEAN_BUILD"]:
-            build_command.append("--target")
-            build_command.append("clean")
-        if ARGUMENTS["VERBOSE"]:
-            build_command.append("-v")
-        build_command.append(f"-j{ARGUMENTS['NUMBER_OF_PROCESSORS']}")
-        outcome = subprocess.run(build_command)
-        if outcome.returncode:
-            exit(outcome.returncode)
+        # Clean autogenerated stub
+        clean_autogenerated_stub(extension_import_path)
+
+    # Generate stubs for python scripts
+    for script in module_path.glob("*.py"):
+        if script.name != "__init__.py":
+            script_import_path = f"{import_path}.{script.stem}"
+            # print(script_import_path)
+            outcome = subprocess.run(
+                [
+                    "pybind11-stubgen",
+                    script_import_path,
+                    "-o",
+                    ".",
+                    "--root-suffix=-stubs",
+                    "--numpy-array-remove-parameters",
+                ]
+            )
+            if outcome.returncode:
+                exit(outcome.returncode)
+
+            # Clean autogenerated stub
+            clean_autogenerated_stub(script_import_path)
+
+    # Generate stub for __init__ file
+    if (module_path / "__init__.py").exists():
+        generate_init_stub(module_path)
+
+    return None
+
+
+def generate_stubs(module_path: Path) -> None:
+
+    generate_module_stubs(module_path)
+
+    for submodule in module_path.iterdir():
+        if submodule.is_dir() and (submodule / "__init__.py").exists():
+            generate_stubs(submodule)
+
+
+if __name__ == "__main__":
+
+    # Retrieve command line arguments
+    args = parser.parse_args()
+
+    # Ensure build directory exists
+    build_dir = Path(args.build_dir).resolve()
+    build_dir.mkdir(parents=True, exist_ok=True)
+
+    # Build
+    if args.compile:
+        with chdir(build_dir):
+            outcome = subprocess.run(
+                [
+                    "cmake",
+                    f"-DCMAKE_PREFIX_PATH={CONDA_PREFIX}",
+                    f"-DCMAKE_INSTALL_PREFIX={CONDA_PREFIX}",
+                    f"-DCMAKE_CXX_STANDARD={args.cxx_standard}",
+                    "-DBoost_NO_BOOST_CMAKE=ON",
+                    f"-DCMAKE_BUILD_TYPE={args.build_type}",
+                    f"-DTUDAT_BUILD_TESTS={args.tests}",
+                    f"-DTUDAT_BUILD_WITH_SOFA_INTERFACE={args.sofa}",
+                    f"-DTUDAT_BUILD_WITH_NRLMSISE00={args.nrlmsise00}",
+                    f"-DTUDAT_BUILD_WITH_PAGMO={args.pagmo}",
+                    f"-DTUDAT_BUILD_WITH_JSON_INTERFACE={args.json}",
+                    f"-DTUDAT_BUILD_WITH_EXTENDED_PRECISION_PROPAGATION_TOOLS={args.extended_precision}",
+                    "..",
+                ]
+            )
+            if outcome.returncode:
+                exit(outcome.returncode)
+
+            build_command = ["cmake", "--build", "."]
+            if args.clean:
+                build_command.append("--target")
+                build_command.append("clean")
+            build_command.append(f"-j{args.j}")
+            outcome = subprocess.run(build_command)
+            if outcome.returncode:
+                exit(outcome.returncode)
 
     # Post-process tudatpy stubs
-    if ARGUMENTS["GENERATE_STUBS"]:
-
-        stubs_dir = Path("tudatpy/src/tudatpy-stubs")
-        stubs_dir.mkdir(parents=True, exist_ok=True)
-        source_dir = Path("tudatpy/src/tudatpy")
-        ignored_modules = [
-            "cli",
-            "apps",
-            "db",
-            "plotting",
-            "util",
-            "__pycache__",
-            "data",
-        ]
-        print("Generating stubs for tudatpy...")
-
-        # Add __init__.py files
-        for file in source_dir.rglob("*__init__.py"):
-            stub_path = stubs_dir / file.relative_to(source_dir).with_suffix(".pyi")
-            stub_path.parent.mkdir(parents=True, exist_ok=True)
-            stub_path.write_text(file.read_text())
-
-        # Generate stubs for extensions
-        if stubs_dir.exists():
-            with chdir(source_dir.parent):
-
-                for file in Path(".").rglob("*.so"):
-                    base_import_path = str(file.parent).replace("/", ".")
-                    import_path = base_import_path + f".{file.name.split('.')[0]}"
-                    outcome = subprocess.run(
-                        [
-                            "pybind11-stubgen",
-                            import_path,
-                            "-o",
-                            ".",
-                            "--root-suffix=-stubs",
-                            "--numpy-array-remove-parameters",
-                        ]
-                    )
-                    if outcome.returncode:
-                        exit(outcome.returncode)
-
-                for module in Path("tudatpy-stubs").iterdir():
-
-                    if module.is_dir() and module.name:
-                        generate_init_stub(module.name)
-                        for smodule in module.iterdir():
-                            if smodule.is_dir():
-                                generate_init_stub(f"{module.name}.{smodule.name}")
-                                for ssmodule in smodule.iterdir():
-                                    if ssmodule.is_dir():
-                                        generate_init_stub(
-                                            f"{module.name}.{smodule.name}.{ssmodule.name}"
-                                        )
-
-            # Remove __future__ imports
-            for file in stubs_dir.rglob("*.pyi"):
-
-                if any(module in file.parts for module in ignored_modules):
-                    print("Ignoring ", file)
-                    continue
-
-                data = file.read_text().splitlines()
-                try:
-                    for idx, line in enumerate(data):
-                        if "__future__" in line:
-                            data.pop(idx)
-                            break
-                    file.write_text("\n".join(data))
-                except IndexError:
-                    pass  # Empty file
+    if args.stubs:
+        with chdir("tudatpy/src"):
+            generate_stubs(TUDATPY_ROOT)

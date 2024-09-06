@@ -14,6 +14,7 @@ dependencies:
   - pybind11-abi
   # Python dependencies
   - numpy<2.0.0
+  - scipy
   - mypy
   - pytest
   - mypy
@@ -23,3 +24,4 @@ dependencies:
   - astropy    # for tudatpy.data.mpc
   - astroquery # for tudatpy.data.mpc
   - astropy-healpix  # for tudatpy.data._biases
+  - pybind11-stubgen
