@@ -1,102 +1,137 @@
 import argparse
 import os
+import shutil
 from pathlib import Path
 from contextlib import chdir
 import subprocess
 import ast
 import sys
+import string
 
 # Globals
 TUDATPY_ROOT = Path("tudatpy/src/tudatpy").absolute()
 STUBS_ROOT = Path("tudatpy/src/tudatpy-stubs").absolute()
 CONDA_PREFIX = os.environ["CONDA_PREFIX"]
-
-# Define argument parser
-parser = argparse.ArgumentParser(
-    prog="build.py",
-    description="Build Tudat, TudatPy and generate stubs",
-)
-
-parser.add_argument(
-    "-j", metavar="<cores>", type=int, default=1, help="Number of processors to use"
-)
-parser.add_argument(
-    "-c",
-    "--clean",
-    action="store_true",
-    help="Clean after build",
-)
-parser.add_argument(
-    "--build-dir",
-    metavar="<path>",
-    type=str,
-    default="build",
-    help="Build directory",
-)
-parser.add_argument(
-    "--build-type",
-    metavar="<type>",
-    default="Release",
-    help="Build type: Release, Debug",
-)
-parser.add_argument(
-    "--no-tests",
-    dest="tests",
-    action="store_false",
-    help="Build Tudat tests",
-)
-parser.add_argument(
-    "--no-sofa",
-    dest="sofa",
-    action="store_false",
-    help="Build without SOFA",
-)
-parser.add_argument(
-    "--no-nrlmsise00",
-    dest="nrlmsise00",
-    action="store_false",
-    help="Build without NRLMSISE00",
-)
-parser.add_argument(
-    "--json",
-    dest="json",
-    action="store_true",
-    help="Build with JSON interface",
-)
-parser.add_argument(
-    "--pagmo",
-    action="store_true",
-    help="Build with PaGMO",
-)
-parser.add_argument(
-    "--extended-precision",
-    action="store_true",
-    help="Build with extended precision propagation tools",
-)
-
-# Choose what to compile
-parser.add_argument(
-    "--no-compile",
-    dest="compile",
-    action="store_false",
-    help="Skip compilation of tudat and tudatpy",
-)
-parser.add_argument(
-    "--clean-stubs",
-    dest="clean_stubs",
-    action="store_true",
-    help="Generate TudatPy stubs from scratch",
-)
-parser.add_argument(
-    "--cxx-standard",
-    metavar="<standard>",
-    default="14",
-    help="C++ standard",
-)
+PYLIB_PREFIX = (
+    Path(sys.exec_prefix)
+    / sys.platlibdir
+    / f"python{sys.version_info.major}.{sys.version_info.minor}"
+    / "site-packages"
+).resolve()
 
 
-# Stub generation
+class BuildParser(argparse.ArgumentParser):
+    """Argument parser for build script"""
+
+    def __init__(self) -> None:
+
+        super().__init__(prog="build.py", description="Build tudat and tudatpy")
+
+        # Control CMake setup
+        setup_group = self.add_argument_group(title="CMake setup")
+        setup_group.add_argument(
+            "--setup",
+            action="store_true",
+            help="Forced CMake setup if build directory already exists",
+        )
+        setup_group.add_argument(
+            "-c",
+            "--clean",
+            action="store_true",
+            help="Regenerate build directory from scratch",
+        )
+        setup_group.add_argument(
+            "--build-dir",
+            metavar="<path>",
+            type=str,
+            default="build",
+            help="Path to build directory",
+        )
+        setup_group.add_argument(
+            "--build-type",
+            metavar="<type>",
+            default="Release",
+            help="Build type: Release, Debug",
+        )
+        setup_group.add_argument(
+            "--cxx-standard",
+            metavar="<std>",
+            default="14",
+            help="C++ standard",
+        )
+        setup_group.add_argument(
+            "--tudat-tests",
+            action="store_true",
+            help="Build Tudat tests",
+        )
+        setup_group.add_argument(
+            "--no-sofa",
+            dest="sofa",
+            action="store_false",
+            help="Build without SOFA interface",
+        )
+        setup_group.add_argument(
+            "--no-nrlmsise00",
+            dest="nrlmsise00",
+            action="store_false",
+            help="Build without NRLMSISE00 interface",
+        )
+        setup_group.add_argument(
+            "--json",
+            action="store_true",
+            help="Build with JSON interface",
+        )
+        setup_group.add_argument(
+            "--pagmo",
+            action="store_true",
+            help="Build with PAGMO",
+        )
+        setup_group.add_argument(
+            "--extended-precision",
+            action="store_true",
+            help="Build with extended precision propagation tools",
+        )
+
+        # Control CMake build
+        control_group = self.add_argument_group("CMake build")
+        control_group.add_argument(
+            "-j",
+            metavar="<cores>",
+            default="1",
+            help="Number of processors",
+        )
+        control_group.add_argument(
+            "--no-tudat",
+            dest="skip_tudat",
+            action="store_true",
+            help="Skip Tudat compilation",
+        )
+        control_group.add_argument(
+            "--no-tudatpy",
+            dest="skip_tudatpy",
+            action="store_true",
+            help="Skip TudatPy compilation",
+        )
+
+        # Control stub generation
+        stubs_group = self.add_argument_group("Stub generation")
+        stubs_group.add_argument(
+            "--no-stubs",
+            dest="stubs",
+            action="store_false",
+            help="Skip stub generation",
+        )
+        stubs_group.add_argument(
+            "--stubs-clean",
+            action="store_true",
+            help="Generate stubs from scratch",
+        )
+
+        return None
+
+
 class StubGenerator:
+    """Stub generation"""
 
     def __init__(self, clean: bool = False) -> None:
         self.clean = clean
@@ -207,6 +242,35 @@ class StubGenerator:
         return None
 
     @staticmethod
+    def _adjust_docstring_indentation(text):
+
+        # Replace tabs with character not affected by strip
+        text = text.replace("    ", "¿")
+
+        # Split input into lines and remove leading/trailing whitespace
+        lines = [line.strip() for line in text.splitlines()]
+        while lines[0] == "":
+            lines.pop(0)
+
+        # Find indentation level of first line
+        lev0 = len(lines[0].split("¿"))
+        lev1 = lev0
+        for line in lines[1:]:
+            if line != "":
+                lev1 = len(line.split("¿"))
+                break
+        diff = lev1 - lev0
+
+        # Adjust indentation for all lines
+        newlines = [lines[0].replace("¿", "")]
+        for line in lines[1:]:
+            terms = line.split("¿")[diff:]
+            line = "\t".join(terms)
+            newlines.append(("\t" * lev0) + line)
+
+        return "\n".join(newlines) + "\n" + ("\t" * lev0)
+
+    @staticmethod
     def _generate_init_stub(module_path: Path) -> None:
         """Generates stub for __init__ file
 
@@ -312,7 +376,7 @@ class StubGenerator:
             content = ast.parse(f.read())
 
         includes_typing = False
-        for statement in content.body:
+        for idx, statement in enumerate(content.body):
 
             if isinstance(statement, ast.ImportFrom):
                 if statement.module == "__future__":
@@ -324,6 +388,16 @@ class StubGenerator:
                         includes_typing = True
                         break
 
+            if isinstance(
+                statement,
+                (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef, ast.Module),
+            ):
+                _docstring = ast.get_docstring(statement, clean=True)
+                if _docstring is not None:
+                    _docstring = StubGenerator._adjust_docstring_indentation(_docstring)
+                    statement.body.pop(0)
+                    statement.body.insert(0, ast.Expr(ast.Constant(_docstring)))
+
         if not includes_typing:
             content.body.insert(0, ast.Import([ast.alias("typing")]))
 
@@ -333,27 +407,25 @@ class StubGenerator:
         return None
 
 
-if __name__ == "__main__":
+def setup_build_dir(args: argparse.Namespace, build_dir: Path) -> None:
+    """Set up CMake build directory"""
 
-    # Retrieve command line arguments
-    args = parser.parse_args()
+    if build_dir.exists() and args.clean:
+        shutil.rmtree(build_dir)
 
-    # Ensure build directory exists
-    build_dir = Path(args.build_dir).resolve()
-    build_dir.mkdir(parents=True, exist_ok=True)
-
-    # Build
-    if args.compile:
+    if (not build_dir.exists()) or (args.setup):
         with chdir(build_dir):
             outcome = subprocess.run(
                 [
                     "cmake",
+                    f"-DSKIP_TUDAT={args.skip_tudat}",
+                    f"-DSKIP_TUDATPY={args.skip_tudatpy}",
                     f"-DCMAKE_PREFIX_PATH={CONDA_PREFIX}",
                     f"-DCMAKE_INSTALL_PREFIX={CONDA_PREFIX}",
                     f"-DCMAKE_CXX_STANDARD={args.cxx_standard}",
                     "-DBoost_NO_BOOST_CMAKE=ON",
                     f"-DCMAKE_BUILD_TYPE={args.build_type}",
-                    f"-DTUDAT_BUILD_TESTS={args.tests}",
+                    f"-DTUDAT_BUILD_TESTS={args.tudat_tests}",
                     f"-DTUDAT_BUILD_WITH_SOFA_INTERFACE={args.sofa}",
                     f"-DTUDAT_BUILD_WITH_NRLMSISE00={args.nrlmsise00}",
                     f"-DTUDAT_BUILD_WITH_PAGMO={args.pagmo}",
@@ -364,28 +436,31 @@ if __name__ == "__main__":
             )
             if outcome.returncode:
                 exit(outcome.returncode)
+    return None
 
-            build_command = ["cmake", "--build", "."]
-            if args.clean:
-                build_command.append("--target")
-                build_command.append("clean")
-            build_command.append(f"-j{args.j}")
-            outcome = subprocess.run(build_command)
-            if outcome.returncode:
-                exit(outcome.returncode)
 
-    # Post-process tudatpy stubs
+if __name__ == "__main__":
+
+    # Retrieve command line arguments
+    args = BuildParser().parse_args()
+
+    # Define build directory
+    build_dir = Path(args.build_dir).resolve()
+
+    # Set up build directory
+    setup_build_dir(args, build_dir)
+
+    # Build libraries
+    with chdir(build_dir):
+        outcome = subprocess.run(["cmake", "--build", ".", f"-j{args.j}"])
+        if outcome.returncode:
+            exit(outcome.returncode)
+
+    # Generate stubs
     with chdir("tudatpy/src"):
 
-        pylib_prefix = (
-            Path(sys.exec_prefix)
-            / sys.platlibdir
-            / f"python{sys.version_info.major}.{sys.version_info.minor}"
-            / "site-packages"
-        ).resolve()
-
-        if (pylib_prefix / "tudatpy").exists():
-            stub_generator = StubGenerator(clean=args.clean_stubs)
+        if (PYLIB_PREFIX / "tudatpy").exists():
+            stub_generator = StubGenerator(clean=args.stubs_clean)
             stub_generator.generate_stubs(TUDATPY_ROOT)
         else:
             print("TudatPy is not installed yet. Skipping stub generation.")
