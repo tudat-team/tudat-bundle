@@ -27,13 +27,21 @@ project(TudatBundle)
 #  documented versions of the source is desired. This step is OPTIONAL, so if development is not related to
 #  docstrings present in the releases, then no need to worry.
 # Tudat project.
-if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.tudat-documented)
-    message(STATUS "Using DOCUMENTED tudat")
-    add_subdirectory(".tudat-documented")
+if (${SKIP_TUDAT})
+    message(STATUS "Skipping Tudat")
 else ()
-    message(STATUS "Using UNDOCUMENTED tudat")
-    add_subdirectory(tudat)
-endif ()
+    if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.tudat-documented)
+        message(STATUS "Using DOCUMENTED tudat")
+        add_subdirectory(".tudat-documented")
+    else ()
+        message(STATUS "Using UNDOCUMENTED tudat")
+        add_subdirectory(tudat)
+    endif ()
+endif()
 
 # TudatPy project.
-add_subdirectory(tudatpy)
+if (${SKIP_TUDATPY})
+    message(STATUS "Skipping TudatPy")
+else ()
+    add_subdirectory(tudatpy)
+endif ()

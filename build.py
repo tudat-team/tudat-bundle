@@ -112,6 +112,12 @@ class BuildParser(argparse.ArgumentParser):
             action="store_true",
             help="Skip TudatPy compilation",
         )
+        control_group.add_argument(
+            "-v",
+            "--verbose",
+            action="store_true",
+            help="Verbose build",
+        )
 
         # Control stub generation
         stubs_group = self.add_argument_group("Stub generation")
@@ -414,28 +420,30 @@ def setup_build_dir(args: argparse.Namespace, build_dir: Path) -> None:
         shutil.rmtree(build_dir)
 
     if (not build_dir.exists()) or (args.setup):
-        with chdir(build_dir):
-            outcome = subprocess.run(
-                [
-                    "cmake",
-                    f"-DSKIP_TUDAT={args.skip_tudat}",
-                    f"-DSKIP_TUDATPY={args.skip_tudatpy}",
-                    f"-DCMAKE_PREFIX_PATH={CONDA_PREFIX}",
-                    f"-DCMAKE_INSTALL_PREFIX={CONDA_PREFIX}",
-                    f"-DCMAKE_CXX_STANDARD={args.cxx_standard}",
-                    "-DBoost_NO_BOOST_CMAKE=ON",
-                    f"-DCMAKE_BUILD_TYPE={args.build_type}",
-                    f"-DTUDAT_BUILD_TESTS={args.tudat_tests}",
-                    f"-DTUDAT_BUILD_WITH_SOFA_INTERFACE={args.sofa}",
-                    f"-DTUDAT_BUILD_WITH_NRLMSISE00={args.nrlmsise00}",
-                    f"-DTUDAT_BUILD_WITH_PAGMO={args.pagmo}",
-                    f"-DTUDAT_BUILD_WITH_JSON_INTERFACE={args.json}",
-                    f"-DTUDAT_BUILD_WITH_EXTENDED_PRECISION_PROPAGATION_TOOLS={args.extended_precision}",
-                    "..",
-                ]
-            )
-            if outcome.returncode:
-                exit(outcome.returncode)
+        outcome = subprocess.run(
+            [
+                "cmake",
+                f"-DSKIP_TUDAT={args.skip_tudat}",
+                f"-DSKIP_TUDATPY={args.skip_tudatpy}",
+                f"-DCMAKE_PREFIX_PATH={CONDA_PREFIX}",
+                f"-DCMAKE_INSTALL_PREFIX={CONDA_PREFIX}",
+                f"-DCMAKE_CXX_STANDARD={args.cxx_standard}",
+                "-DBoost_NO_BOOST_CMAKE=ON",
+                f"-DCMAKE_BUILD_TYPE={args.build_type}",
+                f"-DTUDAT_BUILD_TESTS={args.tudat_tests}",
+                f"-DTUDAT_BUILD_WITH_SOFA_INTERFACE={args.sofa}",
+                f"-DTUDAT_BUILD_WITH_NRLMSISE00={args.nrlmsise00}",
+                f"-DTUDAT_BUILD_WITH_PAGMO={args.pagmo}",
+                f"-DTUDAT_BUILD_WITH_JSON_INTERFACE={args.json}",
+                f"-DTUDAT_BUILD_WITH_EXTENDED_PRECISION_PROPAGATION_TOOLS={args.extended_precision}",
+                "-B",
+                f"{build_dir}",
+                "-S",
+                ".",
+            ]
+        )
+        if outcome.returncode:
+            exit(outcome.returncode)
     return None
 
 
@@ -452,7 +460,10 @@ if __name__ == "__main__":
 
     # Build libraries
     with chdir(build_dir):
-        outcome = subprocess.run(["cmake", "--build", ".", f"-j{args.j}"])
+        build_command = ["cmake", "--build", ".", f"-j{args.j}"]
+        if args.verbose:
+            build_command.append("--verbose")
+        outcome = subprocess.run(build_command)
         if outcome.returncode:
             exit(outcome.returncode)
 

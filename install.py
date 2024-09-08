@@ -2,22 +2,51 @@ import sys
 from pathlib import Path
 import os
 import argparse
+from build import setup_build_dir, BuildParser
 
 # Globals
 CONDA_PREFIX = Path(os.environ["CONDA_PREFIX"]).resolve()
 
-# Define argument parser
-parser = argparse.ArgumentParser(
-    prog="install.py",
-    description="Install Tudat and TudatPy in active conda environment",
-)
-parser.add_argument(
-    "--build-dir",
-    metavar="<path>",
-    type=str,
-    default="build",
-    help="Build directory",
-)
+
+# Argument parser
+class InstallParser(argparse.ArgumentParser):
+
+    def __init__(self) -> None:
+
+        super().__init__(
+            prog="install.py",
+            description="Install Tudat and TudatPy in active conda environment",
+        )
+
+        self.add_argument(
+            "--build-dir",
+            metavar="<path>",
+            type=str,
+            default="build",
+            help="Build directory",
+        )
+
+        # Choose what to install
+        self.add_argument(
+            "--no-tudat",
+            dest="install_tudat",
+            action="store_false",
+            help="Do not install Tudat",
+        )
+        self.add_argument(
+            "--no-tudatpy",
+            dest="install_tudatpy",
+            action="store_false",
+            help="Do not install TudatPy",
+        )
+        self.add_argument(
+            "--no-stubs",
+            dest="install_stubs",
+            action="store_false",
+            help="Do not install TudatPy stubs",
+        )
+
+        return None
 
 
 # Editable installation
@@ -52,11 +81,24 @@ def install(src: Path, dst: Path, manifest, iterate: bool = False) -> None:
 if __name__ == "__main__":
 
     # Parse arguments
-    args = parser.parse_args()
+    args = InstallParser().parse_args()
+
+    # Check if TudatPy is already installed
+    tudatpy_installed = True
+    try:
+        from tudatpy import __version__
+    except ImportError:
+        tudatpy_installed = False
+
+    if tudatpy_installed:
+        print("TudatPy is already installed!")
+        exit(0)
 
     # Source and destination directories
     build_dir = Path(args.build_dir).resolve()
-    build_dir.mkdir(parents=True, exist_ok=True)
+    if not build_dir.exists():
+        setup_build_dir(BuildParser().parse_args(None), build_dir)
+
     tudat_dir = (build_dir.parent / "tudat").resolve()
     tudatpy_dir = (build_dir.parent / "tudatpy").resolve()
     pylib_prefix = (
@@ -69,38 +111,44 @@ if __name__ == "__main__":
     # Perform installation
     with open(build_dir / "custom-manifest.txt", "w") as manifest:
 
-        # Tudat static libraries
-        install(build_dir / "lib", CONDA_PREFIX / "lib", manifest, iterate=True)
+        # Tudat
+        if args.install_tudat:
+            # Tudat static libraries
+            install(build_dir / "lib", CONDA_PREFIX / "lib", manifest, iterate=True)
 
-        # Tudat headers
-        # (conda_prefix / "include/tudat").mkdir(parents=True, exist_ok=True)
-        # No need to create include/tudat. It is created by tudat-resources
-        install(
-            build_dir / "tudat/include/tudat/config.hpp",
-            CONDA_PREFIX / "include/tudat/config.hpp",
-            manifest,
-        )
-        for item in (tudat_dir / "include/tudat").iterdir():
-            install(item, CONDA_PREFIX / "include/tudat" / item.name, manifest)
-
-        # Tudat cmake files
-        (CONDA_PREFIX / "lib/cmake/tudat").mkdir(parents=True, exist_ok=True)
-        for item in (build_dir / "tudat").iterdir():
-            if item.suffix == ".cmake" and "tudat" in item.name.lower():
-                install(item, CONDA_PREFIX / "lib/cmake/tudat" / item.name, manifest)
-        manifest.write(str(CONDA_PREFIX / "lib/cmake/tudat") + "\n")
-
-        # Tudatpy
-        install(
-            tudatpy_dir / "src/tudatpy",
-            pylib_prefix / "tudatpy",
-            manifest,
-        )
-
-        # Tudatpy stubs
-        if Path(tudatpy_dir / "src/tudatpy-stubs").exists():
+            # Tudat headers
+            # (conda_prefix / "include/tudat").mkdir(parents=True, exist_ok=True)
+            # No need to create include/tudat. It is created by tudat-resources
             install(
-                tudatpy_dir / "src/tudatpy-stubs",
-                pylib_prefix / "tudatpy-stubs",
+                build_dir / "tudat/include/tudat/config.hpp",
+                CONDA_PREFIX / "include/tudat/config.hpp",
                 manifest,
             )
+            for item in (tudat_dir / "include/tudat").iterdir():
+                install(item, CONDA_PREFIX / "include/tudat" / item.name, manifest)
+
+            # Tudat cmake files
+            (CONDA_PREFIX / "lib/cmake/tudat").mkdir(parents=True, exist_ok=True)
+            for item in (build_dir / "tudat").iterdir():
+                if item.suffix == ".cmake" and "tudat" in item.name.lower():
+                    install(
+                        item, CONDA_PREFIX / "lib/cmake/tudat" / item.name, manifest
+                    )
+            manifest.write(str(CONDA_PREFIX / "lib/cmake/tudat") + "\n")
+
+        # Tudatpy
+        if args.install_tudatpy:
+            install(
+                tudatpy_dir / "src/tudatpy",
+                pylib_prefix / "tudatpy",
+                manifest,
+            )
+
+        # Tudatpy stubs
+        if args.install_stubs:
+            if Path(tudatpy_dir / "src/tudatpy-stubs").exists():
+                install(
+                    tudatpy_dir / "src/tudatpy-stubs",
+                    pylib_prefix / "tudatpy-stubs",
+                    manifest,
+                )
