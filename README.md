@@ -1,8 +1,7 @@
 # tudat-bundle
 
-This repository facilitates parallel development between the `tudat` (C++) and the
-`tudatpy` (Python) library.
-Specific indications for documenting `tudat` or `tudapy` are reported in the `tudat-multidoc/README.md` file.
+This repository facilitates parallel development and compilation of the `tudat` (C++) and the
+`tudatpy` (Python exposure) libraries.
 
 Please note that for normal usage, we recommend the use of our **conda packages**. For more details on the project, we refer to the [project website](https://docs.tudat.space/en/latest/) and our [project Github page](https://github.com/tudat-team).
 
@@ -12,18 +11,13 @@ The `tudat-bundle` comprises the following repositories:
 
 - `tudat`, where the tudat source code is located (this is a separate git repository);
 - `tudatpy`, where the tudatpy binding code is located (this is a separate git repository);
-- `tudat-multidoc`, where the documentation and the system to build the API is located (this is a separate git repository);
-- `cli`, where the Python Command Line Interface scripts to build the API are located;
 
-In addition, once the project is built, all the build output will be dumped in the `cmake-build-debug` directory, which
-is not tracked by Git. If the API is also built, more untracked directories will appear, but this is explained in the
-`tudat-multidoc/README.md` file.
+Once the project is built, all the build output will be stored in a build directory (name `build`, `cmake-build-debug`, or similar, depending on your workflow), which is not tracked by Git. 
 
 ## Prerequisites
 
 - [**Windows Users**] Windows Subsystem for Linux ([WSL](https://docs.microsoft.com/en-us/windows/wsl/install))
-  - All procedures, including the following prerequisite, assume the use of WSL. Power users who wish to do otherwise,
-    must do so at their own risk, with reduced support from the team.
+  - All procedures, including the following prerequisite, assume the use of WSL. 
   - Note that WSL is a, partially separated, Ubuntu terminal environment for Windows. Anaconda/Miniconda, Python and any other dependencies you require while **executing code** from the `tudat-bundle`, must be installed in its Linux version via the Ubuntu terminal. This does not apply to PyCharm/CLion however, which can be configured to compile and/or run Python code through the WSL.
   - Note that, to access files and folders of WSL directly in Windows explorer, one can type `\\wsl$` or `Linux` in the Windows explorer access bar, then press enter.
   - At the opposite, please follow [this guide](https://docs.microsoft.com/en-us/windows/wsl/wsl2-mount-disk) to access Windows file trough WSL.
@@ -31,7 +25,7 @@ is not tracked by Git. If the API is also built, more untracked directories will
   - In the Ubuntu terminal environment under WSL, run the command `sudo apt-get install build-essential` to install the necessary compilation tools
 - Anaconda/Miniconda installation ([Installing Anaconda](https://tudat-space.readthedocs.io/en/latest/_src_first_steps/tudat_py.html#installing-anaconda))
 - CMake installation
-  - Inside the Ubuntu terminal, install CMake by calling `sudo apt install cmake`.
+  - Inside the (Ubuntu) terminal, install CMake by calling `sudo apt install cmake`.
 
 ## Setup
 
@@ -42,14 +36,7 @@ git clone https://github.com/tudat-team/tudat-bundle
 cd tudat-bundle
 ````
 
-> **Note** \
-> The `tudat-bundle` repository uses git submodules, which "allow you to keep a Git repository as a subdirectory of
-> another Git repository" (from [the Git guide](https://git-scm.com/book/en/v2/Git-Tools-Submodules)). In particular,
-> in the `tudat-bundle` there are four different subdirectories that are separate repositories: `tudat`, `tudatpy`,
-> `tudat-multidoc` and `tudat-multidoc/multidoc`. Each repository has its own branches and functions separately from
-> the others. This is the reason why the following two steps are needed.
-
-2. Clone the `tudat` & `tudatpy` submodules
+2. Clone the `tudat` & `tudatpy` submodules (which are submodules of tudat-bundle, see [the Git guide](https://git-scm.com/book/en/v2/Git-Tools-Submodules))
 
 ````
 git submodule update --init --recursive
@@ -58,18 +45,21 @@ git submodule update --init --recursive
 3. Switch `tudat` & `tudatpy` to their desired branches using
 
 ````
-cd <tudat/tudatpy>
-git checkout <branch-name>
+cd tudat
+git checkout develop
+
+cd  ..
+
+cd tudatpy
+git checkout develop
 ````
-We recommend working with the `develop` branches ([tudatpy/develop](https://github.com/tudat-team/tudatpy/tree/develop), [tudat/develop](https://github.com/tudat-team/tudat/tree/develop)), as they receive frequent updates and are the ones used to build the Conda packages.
+We recommend working with the `develop` branches ([tudatpy/develop](https://github.com/tudat-team/tudatpy/tree/develop), [tudat/develop](https://github.com/tudat-team/tudat/tree/develop)), which is the typical entry point for developers.
 
 4. Install the contained `environment.yaml` file to satisfy dependencies
 
 ````
 conda env create -f environment.yaml
 ````
-
-It is possible that the creation of the environment will 'time out'. A likely reason for this is that the packages required cannot be found by the current channel, `conda-forge`. It is then advisable to add the channel `anaconda` to ensure a proper creation of the environment.
 
 There are two directions you can go from here: the command line or CLion.
 
@@ -83,14 +73,22 @@ conda activate tudat-bundle
 
 6. Build Tudat and TudatPy
 
-This script will compile the C++ source code of Tudat into libraries. The process will take some time, but you can speed it up using the option `-j` and the number of cores you want to allocate to it.
+You can compile the C++ source code into libraries using the following command, using the option `-j` and the number of cores you want to allocate to it:
 
 ```
-python build.py -j <number-of-cores>
+python build.py -j 4
 ```
-You can further adjust the behavior of `build.py` with additional command line arguments. Running `python build.py -h` will give you a list with all the available options.
+for using 4 cores (note that each core may take up to 4 GB of RAM, if the compilation is killed prematurely, rerun the above command with a smaller number of cores),
 
-7. Install
+You can further adjust the behavior of `build.py` with additional command line arguments. Running `python build.py -h` will give you a list with all the available options. For instance
+
+```
+python build.py  --no-tests -j 4
+```
+
+will build only the Python exposure and required Tudat librarues, and not the unit test of the C++ code, and will be **much** faster than a full build.
+
+7. Install the compiled libraries in the current environment
 
 Building the libraries from source is conceptually equivalent to manually downloading them as a zip file: you do have the code, but Conda is not aware of it, so you will get an error if you try to import it. The following script creates links to the files generated by `build.py` in the place where Conda will look for them or, in other words, installs your libraries in your Conda environment.
 
@@ -102,26 +100,14 @@ If you know about PIP's editable installs, that is exactly what `install.py` doe
 
 If you ever want to uninstall the libraries, just run `python uninstall.py`. Note that this will not eliminate the build itself, but just remove it from your Conda environment.
 
-### Alternative build: CLion
-> **Note**
-> - [**Windows Users ∩ CLion Users**] In CLion, be sure to set WSL as your Toolchain
->  in `File>Settings>Build, Execution, Deployment>Toolchains`.
->
-> - [**CLion Users**] In CLion, the convention to set CMake arguments
->  is to add them to `File>Settings>Build, Execution, Deployment>CMake Options`.
+### Build & Install: CLion
+**Note - Windows users**
+Be sure to set WSL as your Toolchain in `File>Settings>Build, Execution, Deployment>Toolchains`.
 
 5. Open CLion, create a new project from `File > New Project` and select the directory that has been cloned under bullet
    point 1 (named `tudat-bundle`).
-> **Note** \
-> To avoid issues with CLion, the directory of the project should correspond exactly to the cloned directory named  `tudat-bundle`.
-
 
 6. Create a build profile in `File > Settings > Build, Execution, Deployment > CMake`.
-> **Note** \
-> The CMake configuration option `CMAKE_BUILD_TYPE` will be determined by the the build profile's `Build type` entry.
-> A `Release` configuration will suppress a significant amount of harmless warnings during compilation. Currently,
-> with the move to a later version of boost, some warnings have cropped up that have either not been fixed in the
-> source code, or have not been suppressed via `tudat/cmake_modules/compiler.cmake`.
 
 7. Add the CMake configuration to the `File > Settings > Build, Execution, Deployment > CMake > CMake options` text box:
 
@@ -136,20 +122,24 @@ The `CONDA_PREFIX` may be determined by activating the environment installed in 
 conda activate tudat-bundle && echo $CONDA_PREFIX
 ````
 
-The following line can also be edited if you wish to build tudatpy with its debug info (switching from `Release` to `RelWithDebInfo`; note that `Debug` is also available):
-````
--DCMAKE_BUILD_TYPE=RelWithDebInfo
-````
 
 [**Optional**] Add `-j<n>` to `File > Settings > Build, Execution, Deployment > CMake > Build options` to use multiple
-processors. It is likely that if you use all of your processors, your build will freeze your PC indefinitely. It is
-recommended to start at `-j2` and work your way up with further builds, ensuring **no unsaved work** in the background.
+processors (note that each core may take up to 4 GB of RAM, if the compilation is killed prematurely, rerun the above command with a smaller number of cores).
 
 8. In the source tree on the left, right click the top level `CMakeLists.txt` then `Load/Reload CMake Project`.
 
-9. `Build > Build Project`
+9. In the top menu, select `Build > Build Project` to compile tudat with the selected settings.
 
-### Alternative build: VSCode
+10. To use your manually compiled `tudatpy` kernel in your Python script, set:
+
+```
+import sys
+sys.path.insert(0, "<build_directory>/tudatpy/")
+```
+
+replacing `<build_directory>` with the full path of your build directory for the project.
+
+### Build & Install: VSCode
 
 This section explains how to configure VSCode with CMake presets to build and manage your `tudat` build. The configuration supports parallel builds, switching between Debug and Release modes, enabling/disabling tests, and cleaning build directories. 
 
