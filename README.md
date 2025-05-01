@@ -55,7 +55,7 @@ cd tudat-bundle
 git submodule update --init --recursive
 ```
 
-3. Switch `tudat` and `tudatpy` to the develop branch
+3. Switch `tudat` and `tudatpy` to the desired branch
 
 ```shell
 cd tudat
@@ -64,18 +64,14 @@ cd ../tudatpy
 git checkout develop
 cd ..
 ```
-You don't necessarily have to use the `develop` branches, but we recommend it, as they receive frequent updates, and are the ones used to build the Conda packages.
+We recommend using the [tudatpy/develop](https://github.com/tudat-team/tudatpy/tree/develop), and [tudat/develop](https://github.com/tudat-team/tudat/tree/develop) branches, which are the typical entry point for developers.
 
 4. Create a conda environment with required dependencies
-
-The file `environment.yaml` specifies all the dependencies you will need to work with `tudat` and `tudatpy`
 
 ```shell
 conda env create -f environment.yaml
 conda activate tudat-bundle
 ```
-> [!NOTE]
-> It is possible that the creation of the environment will "time out". A likely reason for this is that some packages cannot be found by the current channel: `conda-forge`. It is then advisable to add the channel `anaconda` to the "channels" list in `environment.yaml` to ensure a proper creation of the environment.
 
 There are several directions you can follow from here. Our recommendation is to use the `build.py` and `install.py` scripts to compile and install the library, as explained below. Have a look at [Alternative build: CLion](#alternative-build-clion), or [Alternative build: VSCode](#alternative-build-vscode) if you prefer to use those tools instead.
 
@@ -119,52 +115,44 @@ ctest
 If all the tests are passing, your libraries are ready to use! Otherwise, feel free to reach us by asking a question on [installation support](https://github.com/orgs/tudat-team/discussions/categories/installation).
 
 ## Alternative build: CLion
+
 > [!NOTE]
-> - [**Windows Users ∩ CLion Users**] In CLion, be sure to set WSL as your Toolchain
->  in `File>Settings>Build, Execution, Deployment>Toolchains`.
->
-> - [**CLion Users**] In CLion, the convention to set CMake arguments
->  is to add them to `File>Settings>Build, Execution, Deployment>CMake Options`.
+> **Windows users:** Be sure to set WSL as your Toolchain in `File>Settings>Build, Execution, Deployment>Toolchains`.
 
 5. Open CLion, create a new project from `File > New Project` and select the directory that has been cloned under bullet
    point 1 (named `tudat-bundle`).
 
-> [!NOTE]
-> To avoid issues with CLion, the directory of the project should correspond exactly to the cloned directory named  `tudat-bundle`.
-
-
 6. Create a build profile in `File > Settings > Build, Execution, Deployment > CMake`.
-> [!NOTE]
-> The CMake configuration option `CMAKE_BUILD_TYPE` will be determined by the the build profile's `Build type` entry.
-> A `Release` configuration will suppress a significant amount of harmless warnings during compilation. Currently,
-> with the move to a later version of boost, some warnings have cropped up that have either not been fixed in the
-> source code, or have not been suppressed via `tudat/cmake_modules/compiler.cmake`.
 
 7. Add the CMake configuration to the `File > Settings > Build, Execution, Deployment > CMake > CMake options` text box:
 
-```
+```shell
 -DCMAKE_PREFIX_PATH=<CONDA_PREFIX>
 -DCMAKE_CXX_STANDARD=14
 -DBoost_NO_BOOST_CMAKE=ON
 ```
 
 The `CONDA_PREFIX` may be determined by activating the environment installed in step 4 and printing its value:
-````
+```shell
 conda activate tudat-bundle && echo $CONDA_PREFIX
-````
-
-The following line can also be edited if you wish to build tudatpy with its debug info (switching from `Release` to `RelWithDebInfo`; note that `Debug` is also available):
-````
--DCMAKE_BUILD_TYPE=RelWithDebInfo
-````
+```
 
 [**Optional**] Add `-j<n>` to `File > Settings > Build, Execution, Deployment > CMake > Build options` to use multiple
-processors. It is likely that if you use all of your processors, your build will freeze your PC indefinitely. It is
-recommended to start at `-j2` and work your way up with further builds, ensuring **no unsaved work** in the background.
+processors (note that each core may take up to 4 GB of RAM, if the compilation is killed prematurely, rerun the above command with a smaller number of cores).
 
 8. In the source tree on the left, right click the top level `CMakeLists.txt` then `Load/Reload CMake Project`.
 
-9. `Build > Build Project`
+9. In the top menu, select `Build > Build Project` to compile tudat with the selected settings.
+
+10. To use your manually compiled `tudatpy` kernel in your Python script, set:
+
+```
+import sys
+sys.path.insert(0, "<build_directory>/tudatpy/")
+sys.path.insert(0, "<build_directory>/../tudatpy/src/tudatpy/)
+```
+
+replacing `<build_directory>` with the full path of your build directory for the project.
 
 ## Alternative build: VSCode
 
