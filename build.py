@@ -457,7 +457,17 @@ class StubGenerator:
                 "-o",
                 str(self.mock_env.tmp),
                 "--numpy-array-wrap-with-annotated",
-            ],
+		"--enum-class-locations=RotationalPropagatorType:tudatpy.kernel.numerical_simulation.propagation_setup.propagator.RotationalPropagatorType",
+		"--enum-class-locations=TranslationalPropagatorType:tudatpy.kernel.numerical_simulation.propagation_setup.propagator.TranslationalPropagatorType",
+		"--enum-class-locations=AvailableLookupScheme:tudatpy.kernel.math.interpolators.AvailableLookupScheme",
+		"--enum-class-locations=LagrangeInterpolatorBoundaryHandling:tudatpy.kernel.math.interpolators.LagrangeInterpolatorBoundaryHandling",
+		"--enum-class-locations=BoundaryInterpolationType:tudatpy.kernel.math.interpolators.BoundaryInterpolationType",
+		"--enum-class-locations=IAUConventions:tudatpy.kernel.numerical_simulation.environment_setup.rotation_model.IAUConventions",
+		"--enum-class-locations=IntegratedObservationPropertyHandling:tudatpy.kernel.numerical_simulation.estimation_setup.observation.IntegratedObservationPropertyHandling",
+		"--enum-class-locations=LightTimeFailureHandling:tudatpy.kernel.numerical_simulation.estimation_setup.observation.LightTimeFailureHandling",
+		"--enum-class-locations=LinkEndType:tudatpy.kernel.numerical_simulation.estimation_setup.observation.LinkEndType",
+		"--enum-class-locations=AerodynamicCoefficientFrames:tudatpy.kernel.numerical_simulation.environment_setup.aerodynamic_coefficients.AerodynamicCoefficientFrames"
+        ],
             env=self.mock_env.variables,
         )
         if outcome.returncode:
